@@ -1,0 +1,57 @@
+{
+  "name": "erry",
+  "version": "0.4.4",
+  "description": "Powerful discord bot",
+  "main": "index.mts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "FORCE_COLOR=1 pm2 start --name 'erry_test' npx -- tsx index.mts && pm2 save && pm2 log 'erry_test'",
+    "init": "npm install && npx tsx utils/init.mts && npx prisma db push && echo SETUP IS DONE",
+    "restart": "pm2 restart 'erry_test' && pm2 log 'erry_test'",
+    "stop": "pm2 stop 'erry_test'",
+    "delete": "pm2 delete 'erry_test' && pm2 save --force",
+    "bridge_start": "FORCE_COLOR=1 pm2 start --name 'bridge_erry_test' npx -- tsx bridge/index.mts && pm2 save && pm2 log 'bridge_erry_test'",
+    "bridge_restart": "pm2 restart 'bridge_erry_test' && pm2 log 'bridge_erry_test'",
+    "bridge_stop": "pm2 stop 'bridge_erry_test'",
+    "bridge_delete": "pm2 delete 'bridge_erry_test' && pm2 save --force",
+    "delete_all": "pm2 delete 'bridge_erry_test' 'erry_test' && pm2 save --force",
+    "start_all": "FORCE_COLOR=1 pm2 start --name 'bridge_erry_test' npx -- tsx bridge/index.mts && FORCE_COLOR=1 pm2 start --name 'erry_test' npx -- tsx index.mts && pm2 save --force && pm2 log 'erry_test' 'bridge_erry_test'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Undefined-Developers/errybeta.git"
+  },
+  "keywords": [
+    "Discord",
+    "Bot",
+    "Discordjs",
+    "erry",
+    "v14"
+  ],
+  "author": "Rocky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Undefined-Developers/errybeta/issues"
+  },
+  "homepage": "https://github.com/Undefined-Developers/errybeta#readme",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "@types/node": "^20.10.7",
+    "chalk": "^5.3.0",
+    "discord-cross-hosting": "^2.3.2",
+    "discord-hybrid-sharding": "^2.1.4",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "envfile": "^7.1.0",
+    "moment": "^2.30.1",
+    "prisma": "^5.7.1",
+    "redis": "^4.6.12"
+  },
+  "prisma": {
+    "schema": "./utils/schema.prisma"
+  }
+}

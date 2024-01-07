@@ -1,0 +1,87 @@
+{
+    "commands": {
+        "test": {
+            "slashLocalizations": {
+                "name": "test",
+                "description": "Test description for command"
+            }
+        }
+    },
+    "common": {
+        "error": "Error while executing `{{command}}`, try again or contact support! ```\n{{error}}\n```",
+        "noperms1": "{{Emoji_no}} You need __all__ those Permissions:",
+        "noperms2": "{{Emoji_no}} You need one of those Permissions:",
+        "cooldown": {
+            "cmd": "{{Emoji_no}}Wait... Command cooldown",
+            "guild": "{{Emoji_no}}Wait... Command cooldown on this guild",
+            "global": "{{Emoji_no}}Wait... STOP PLEASE",
+            "cmd_": "> {{Emoji_arrow}}You can use this Command `{{time}}`",
+            "guild_": "> {{Emoji_arrow}}This Guild can use this Command `{{time}}`",
+            "global_": "> {{Emoji_arrow}}You only get use `{{amount}}` Commands per `{{time}}` Seconds"
+        },
+        "owner": {
+            "notowner": "{{Emoji_no}} You're not the owner of this bot or you haven't permission to do that",
+            "notownerdesc": "{{Emoji_arrow}} To use theese commandsd you need to be 1 of this users: \n>>> {{info}}"
+        },
+        "metrics": {
+            "seconds": "Seconds",
+            "secondsShort": "s",
+            "minutes": "Minutes",
+            "minutesShort": "m",
+            "hours": "Hours",
+            "hoursShort": "h",
+            "days": "Days",
+            "daysShort": "d",
+            "miliseconds": "Miliseconds",
+            "milisecondsShort": "ms"
+        },
+        "permissions": {
+            "AddReactions": "Add Reactions",
+            "Administrator": "Administrator",
+            "AttachFiles": "Attach Files",
+            "BanMembers": "Ban Members",
+            "ChangeNickname": "Change Nickname",
+            "Connect": "Connect",
+            "CreateInstantInvite": "Create Invites",
+            "CreatePrivateThreads": "Create Private Threads",
+            "CreatePublicThreads": "Create Public Threads",
+            "DeafenMembers": "Deafen Members",
+            "EmbedLinks": "Embed Links",
+            "KickMembers": "Kick Members",
+            "ManageChannels": "Manage Channels",
+            "ManageEmojisAndStickers": "Manage Emojis And Stickers (Manage Guild Expressions)",
+            "ManageEvents": "Manage Events",
+            "ManageGuild": "Manage Guild",
+            "ManageGuildExpressions": "Manage Guild Expressions (Manage Emojis And Stickers)",
+            "ManageMessages": "Manage Messages",
+            "ManageNicknames": "Manage Nicknames",
+            "ManageRoles": "Manage Roles",
+            "ManageThreads": "Manage Threads",
+            "ManageWebhooks": "Manage Webhooks",
+            "MentionEveryone": "Mention Everyone",
+            "ModerateMembers": "Moderate Members",
+            "MoveMembers": "Move Members",
+            "MuteMembers": "Mute Members",
+            "PrioritySpeaker": "Priority Speaker",
+            "ReadMessageHistory": "Read Messages History",
+            "RequestToSpeak": "Request To Speak",
+            "SendMessages": "Send Messages",
+            "SendMessagesInThreads": "Send Messages In Threads",
+            "SendTTSMessages": "Send TTS Messages",
+            "SendVoiceMessages": "Send Voice Messages",
+            "Speak": "Speak",
+            "Stream": "Stream",
+            "UseApplicationCommands": "Use Application Commands",
+            "UseEmbeddedActivities": "Use Embedded Activities",
+            "UseExternalEmojis": "Use External Emojis",
+            "UseExternalSounds": "Use External Sounds",
+            "UseExternalStickers": "Use External Stickers",
+            "UseSoundboard": "Use Soundboard",
+            "UseVAD": "Use Voice Activity Detection",
+            "ViewAuditLog": "View Audit Log",
+            "ViewChannel": "View Channel",
+            "ViewCreatorMonetizationAnalytics": "View Creator Monetization Analytics",
+            "ViewGuildInsights": "View Guild Insights"
+        }
+    }
+}

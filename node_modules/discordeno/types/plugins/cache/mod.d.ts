@@ -1,0 +1,10 @@
+import '../../_dnt.polyfills.js';
+import { Bot } from "./deps.js";
+import { BotWithCache } from "./src/addCacheCollections.js";
+export declare function enableCachePlugin<B extends Bot = Bot>(rawBot: B): BotWithCache<B>;
+export default enableCachePlugin;
+export * from "./src/addCacheCollections.js";
+export * from "./src/dispatchRequirements.js";
+export * from "./src/setupCacheEdits.js";
+export * from "./src/setupCacheRemovals.js";
+export * from "./src/sweepers.js";

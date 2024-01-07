@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function deleteGuild(bot) {
+    const deleteGuildOld = bot.helpers.deleteGuild;
+    bot.helpers.deleteGuild = async function (guildId) {
+        const guild = bot.guilds.get(guildId);
+        if (guild && guild.ownerId !== bot.id) {
+            throw new Error("A bot can only delete a guild it owns.");
+        }
+        return await deleteGuildOld(guildId);
+    };
+}
+exports.default = deleteGuild;
