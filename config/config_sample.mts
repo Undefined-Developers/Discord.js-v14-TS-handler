@@ -17,6 +17,7 @@ const
         log: true,              // Send all log data to console
 
         webhook: {
+            link: "",           // Discord webhook for logs in discord (not required, everything below will not work)
             debug: true,        // Send all debug data to webhook
             info: true,         // Send all info data to webhook
             error: true,        // Send all error data to webhook
@@ -26,8 +27,6 @@ const
             serverlog: true     // Send guild join log data to webhook
         }
     },
-
-    webhook = "", // Discord webhook for logs in discord (not required)
     
     database = "", // postgresql databas econnection link
     
@@ -97,7 +96,6 @@ export function getConfig() {
         "bridge_authToken": bridge_authToken,
         "token": token,
         "logLevel": logLevel,
-        "webhook": webhook,
         "database": database,
         "botName": botName,
         "redis": redis,
@@ -152,7 +150,6 @@ export interface Config {
     "bridge_port": number,
     "token": string,
     "logLevel": LogOptions,
-    "webhook": string,
     "database": string,
     "botName": string,
     "redis": string,
@@ -194,6 +191,7 @@ export interface LogOptions {
 }
 
 export type webhookOptions = {
+    link?: string
     debug?: boolean,
     info?: boolean,
     error?: boolean,

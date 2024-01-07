@@ -1,22 +1,11 @@
 {
-  "name": "erry",
-  "version": "0.4.4",
-  "description": "Powerful discord bot",
+  "name": "discord.js-v14-ts-handler",
+  "version": "0.1.1",
+  "description": "Powerful discord.js v14 handler",
   "main": "index.mts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "FORCE_COLOR=1 pm2 start --name 'erry_test' npx -- tsx index.mts && pm2 save && pm2 log 'erry_test'",
-    "init": "npm install && npx tsx utils/init.mts && npx prisma db push && echo SETUP IS DONE",
-    "restart": "pm2 restart 'erry_test' && pm2 log 'erry_test'",
-    "stop": "pm2 stop 'erry_test'",
-    "delete": "pm2 delete 'erry_test' && pm2 save --force",
-    "bridge_start": "FORCE_COLOR=1 pm2 start --name 'bridge_erry_test' npx -- tsx bridge/index.mts && pm2 save && pm2 log 'bridge_erry_test'",
-    "bridge_restart": "pm2 restart 'bridge_erry_test' && pm2 log 'bridge_erry_test'",
-    "bridge_stop": "pm2 stop 'bridge_erry_test'",
-    "bridge_delete": "pm2 delete 'bridge_erry_test' && pm2 save --force",
-    "delete_all": "pm2 delete 'bridge_erry_test' 'erry_test' && pm2 save --force",
-    "start_all": "FORCE_COLOR=1 pm2 start --name 'bridge_erry_test' npx -- tsx bridge/index.mts && FORCE_COLOR=1 pm2 start --name 'erry_test' npx -- tsx index.mts && pm2 save --force && pm2 log 'erry_test' 'bridge_erry_test'"
+    "init": "npm install && npx tsx utils/init.mts && npx prisma db push && echo SETUP IS DONE"
   },
   "repository": {
     "type": "git",
@@ -24,7 +13,7 @@
   },
   "keywords": [
     "Discord",
-    "Bot",
+    "Handler",
     "Discordjs",
     "erry",
     "v14"

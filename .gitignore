@@ -6,7 +6,7 @@ pids
 
 # Dependency directories
 node_modules
-package_lock.json
+package-lock.json
 
 # Optional npm cache directory
 .npm
