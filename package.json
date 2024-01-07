@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Undefined-Developers/errybeta.git"
+    "url": "git+https://github.com/Undefined-Developers/Discord.js-v14-TS-handler.git"
   },
   "keywords": [
     "Discord",
@@ -32,9 +32,9 @@
   "author": "Rocky",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Undefined-Developers/errybeta/issues"
+    "url": "https://github.com/Undefined-Developers/Discord.js-v14-TS-handler/issues"
   },
-  "homepage": "https://github.com/Undefined-Developers/errybeta#readme",
+  "homepage": "https://github.com/Undefined-Developers/Discord.js-v14-TS-handler#readme",
   "devDependencies": {
     "typescript": "^5.3.3"
   },
