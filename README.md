@@ -9,7 +9,7 @@ This will be used as handler for bot Erry in discord
   6. Easy to use with pre-generated commands (npm run ...)
 
 # Video Setup
-  https://cdn.erry.xyz/u/KAOhZri1KyqkhJxVSz8v.mp4
+  [![Youtube handler setup](https://img.youtube.com/vi/sNgils10YMw/0.jpg)](https://www.youtube.com/watch?v=sNgils10YMw)
 
 # How to setup
   1. Download code
