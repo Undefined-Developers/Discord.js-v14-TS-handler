@@ -1,6 +1,6 @@
 import { Bridge } from 'discord-cross-hosting';
 
-import { getConfig } from '../config/config.mts';
+import { getConfig } from '../config/config';
 
 const server = new Bridge({
     port: getConfig().bridge_port, // The Port of the Server | Proxy Connection (Replit) needs Port 443

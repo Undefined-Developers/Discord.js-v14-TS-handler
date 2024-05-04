@@ -1,11 +1,11 @@
 import { LocaleString } from 'discord.js';
 import { readdir } from 'fs/promises';
 
-import { Config, getConfig } from '../config/config.mts';
-import { Emojis, getEmojis } from '../config/emoji.mts';
-import { commandLocalizations } from '../utils/otherTypes.mts';
-import { globalFilePath } from './BotClient.mjs';
-import { Logger } from './Logger.mjs';
+import { Config, getConfig } from '../config/config.js';
+import { Emojis, getEmojis } from '../config/emoji.js';
+import { commandLocalizations } from '../utils/otherTypes.js';
+import { globalFilePath } from './BotClient.js';
+import { Logger } from './Logger.js';
 
 export class ErryLanguage {
   config: Config

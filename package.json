@@ -2,10 +2,9 @@
   "name": "discord.js-v14-ts-handler",
   "version": "0.1.1",
   "description": "Powerful discord.js v14 handler",
-  "main": "index.mts",
-  "type": "module",
+  "main": "index.ts",
   "scripts": {
-    "init": "npm install && npx tsx utils/init.mts && npx prisma db push && echo SETUP IS DONE"
+    "init": "npm install && npx tsx utils/init.ts && npx prisma db push && echo SETUP IS DONE"
   },
   "repository": {
     "type": "git",

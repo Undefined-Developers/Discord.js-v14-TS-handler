@@ -3,7 +3,7 @@ import { getInfo } from 'discord-hybrid-sharding';
 import { EmbedBuilder, WebhookClient } from 'discord.js';
 import moment from 'moment';
 
-import { getConfig } from '../config/config.mts';
+import { getConfig } from '../config/config';
 
 const strings = {
   Info:    "  Info ",

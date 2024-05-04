@@ -3,9 +3,9 @@ import {
     GuildChannel, LocaleString, parseEmoji, PartialEmoji, PermissionsBitField
 } from 'discord.js';
 
-import { Config, Embed, getConfig } from '../config/config.mts';
-import { BotCounters } from '../utils/otherTypes.mts';
-import { BotClient } from './BotClient.mts';
+import { Config, Embed, getConfig } from '../config/config';
+import { BotCounters } from '../utils/otherTypes';
+import { BotClient } from './BotClient';
 
 export class ErryFunctions {
   client: BotClient

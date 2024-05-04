@@ -1,4 +1,4 @@
-import { BotClient } from '../structures/BotClient.mts';
+import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient) => {
     try {

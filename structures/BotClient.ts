@@ -1,5 +1,5 @@
-import CrossHost from 'discord-cross-hosting';
-import { ClusterClient, getInfo } from 'discord-hybrid-sharding';
+import { Shard } from 'discord-cross-hosting';
+import { ClusterClient, DjsDiscordClient, getInfo } from 'discord-hybrid-sharding';
 import {
     ActivityType, ApplicationCommand, ApplicationCommandType, Client, ClientOptions, Collection,
     ContextMenuCommandBuilder, GatewayIntentBits, GuildResolvable, Partials, PresenceStatusData,
@@ -14,21 +14,21 @@ import { pathToFileURL } from 'url';
 
 import { PrismaClient } from '@prisma/client';
 
-import { Config, getConfig } from '../config/config.mts';
-import { Emojis, getEmojis } from '../config/emoji.mts';
-import { dirSetup } from '../config/SlashCommandDirSetup.mts';
+import { Config, getConfig } from '../config/config';
+import { Emojis, getEmojis } from '../config/emoji';
+import { dirSetup } from '../config/SlashCommandDirSetup';
 import {
     BotCounters, Command, commandOptionChoiceNumber, commandOptionChoiceString, ContextCommand,
     optionTypes
-} from '../utils/otherTypes.mts';
-import { ErryFunctions } from './Functions.mts';
-import { ErryLanguage } from './Language.mts';
-import { Logger } from './Logger.mts';
+} from '../utils/otherTypes';
+import { ErryFunctions } from './Functions';
+import { ErryLanguage } from './Language';
+import { Logger } from './Logger';
 
 export class BotClient extends Client {
     config: Config
     logger: Logger
-    cluster: ClusterClient<unknown>
+    cluster: ClusterClient<DjsDiscordClient>
     commands: Collection<string, Command|ContextCommand>
     eventPaths: Collection<string, {eventName: string, path: string}>
     cooldowns: { user: Collection<string, Collection<string, number>>; guild: Collection<string, Collection<string, number>>; global: Collection<string, number[]>; autocomplete: Collection<string, Collection<string, number>>; };
@@ -37,7 +37,7 @@ export class BotClient extends Client {
     db: PrismaClient
     allCommands: (RESTPostAPIContextMenuApplicationCommandsJSONBody | RESTPostAPIChatInputApplicationCommandsJSONBody)[]
     fetchedApplication: ApplicationCommand<{guild: GuildResolvable;}>[]
-    machine: CrossHost.Shard
+    machine: Shard
     lang: ErryLanguage
     emoji: Emojis
     constructor(options?: ClientOptions) {
@@ -46,8 +46,8 @@ export class BotClient extends Client {
             ...options
         });
         this.config = getConfig()
-        this.cluster = new ClusterClient(this)
-        this.machine = new CrossHost.Shard(this.cluster)
+        this.cluster = new ClusterClient(this);
+        this.machine = new Shard(this.cluster);
         this.logger = new Logger({ prefix: "     Erry    ", ...this.config.logLevel });
         this.commands = new Collection();
         this.eventPaths = new Collection();
@@ -110,7 +110,7 @@ export class BotClient extends Client {
             paths.map(async (path) => {
                 const extender = await import(globalFilePath(resolve(path))).then(x => x.default)
                 const name = resolve(path).includes("\\") ? resolve(path).split("\\").reverse()[0] : resolve(path).split("/").reverse()[0];
-                this.logger.debug(`✅ Extender Loaded: ${name.replace(".mts", "").replace(".ts", "")}`);
+                this.logger.debug(`✅ Extender Loaded: ${name.replace(".ts", "")}`);
                 return extender(this);
             })
         );
@@ -128,7 +128,7 @@ export class BotClient extends Client {
             paths.map(async (path) => {
                 const event = await import(globalFilePath(resolve(path))).then(x => x.default)
                 const splitted =  resolve(path).includes("\\") ? resolve(path).split("\\") : resolve(path).split("/")
-                const eventName = splitted.reverse()[0].replace(".mts", "").replace(".ts", "");
+                const eventName = splitted.reverse()[0].replace(".ts", "");
                 this.eventPaths.set(eventName, { eventName, path: resolve(path) });
                 this.logger.debug(`✅ Event Loaded: ${eventName}`);
                 return this.on(eventName, event.bind(null, this));
@@ -145,7 +145,7 @@ export class BotClient extends Client {
           this.commands.clear();
           const dirs = await promises.readdir(`${process.cwd()}${path}`);
           for(const dir of dirs) {
-              if (!dir.endsWith(".mts") && (await promises.lstat(`${process.cwd()}${path}/${dir}/`).catch(() => null))?.isDirectory?.()) {
+              if (!dir.endsWith(".ts") && (await promises.lstat(`${process.cwd()}${path}/${dir}/`).catch(() => null))?.isDirectory?.()) {
                   const thisDirSetup = dirSetup.find(x => x.Folder.toLowerCase() === dir.toLowerCase());
                   if (!thisDirSetup) {
                       this.logger.stringError(`Could not find the DirSetup for ${dir}`);
@@ -175,7 +175,7 @@ export class BotClient extends Client {
                               this.logger.stringError(`Could not find the groupDirSetup for ${dir}/${file}`);
                               continue;
                           }
-                          const slashCommands = await promises.readdir(groupPath).then(x => x.filter(v => v.endsWith(".mts")));
+                          const slashCommands = await promises.readdir(groupPath).then(x => x.filter(v => v.endsWith(".ts")));
                           if (slashCommands?.length) {
                               var commands: {[key: string]: Command} = {}
                               for (let sFile of slashCommands) {
@@ -302,7 +302,7 @@ export class BotClient extends Client {
                 command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
                 command.slashCommandKey = `/${command.name}`
                 command.mention = `<${command.slashCommandKey}:${command.commandId}>`
-                command.shortName = dir.split(".mts").join("")
+                command.shortName = dir.split(".ts").join("")
                 this.commands.set("context_" + command.name, command)
                 this.logger.debug(`✅ Context Command Loaded: /${command.name}`);
                 this.allCommands.push(Slash.toJSON());

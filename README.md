@@ -13,7 +13,7 @@ This will be used as handler for bot Erry in discord
 
 # How to setup
   1. Download code
-  2. rename `config/config_sample.mts` to `config/config.mts`
+  2. rename `config/config_sample.ts` to `config/config.ts`
   3. fill config (Yes, there is much data needed, but some of that not required to start or you can left default value)
   4. run `npm run init` and wait
   5. While you'll see `SETUP IS DONE` in console - you're good to start bot. Use `npm run start` for starting bot, `npm run bridge_start` to start bridge. Other commands see in `package.json`

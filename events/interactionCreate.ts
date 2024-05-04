@@ -1,8 +1,8 @@
 import { Interaction, InteractionType, LocaleString } from 'discord.js';
 
-import { Embed } from '../config/config.mts';
-import { slashCommandHandler } from '../handlers/SlashCommandHandler.mts';
-import { BotClient } from '../structures/BotClient.mts';
+import { Embed } from '../config/config';
+import { slashCommandHandler } from '../handlers/SlashCommandHandler';
+import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient, interaction: Interaction) => {
     if(!interaction.guild) return;

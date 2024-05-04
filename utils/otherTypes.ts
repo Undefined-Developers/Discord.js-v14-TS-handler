@@ -4,8 +4,8 @@ import {
 
 import { Settings } from '@prisma/client';
 
-import { Embed } from '../config/config.mts';
-import { BotClient } from '../structures/BotClient.mts';
+import { Embed } from '../config/config';
+import { BotClient } from '../structures/BotClient';
 
 export interface Command {
     name: string,

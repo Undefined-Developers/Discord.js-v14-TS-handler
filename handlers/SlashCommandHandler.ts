@@ -5,10 +5,10 @@ import {
 
 import { Settings } from '@prisma/client';
 
-import { cooldowns, Embed } from '../config/config.mts';
-import { BotClient } from '../structures/BotClient.mts';
-import { ErryErrorEmbed } from '../structures/Functions.mts';
-import { Command, ContextCommand } from '../utils/otherTypes.mts';
+import { cooldowns, Embed } from '../config/config';
+import { BotClient } from '../structures/BotClient';
+import { ErryErrorEmbed } from '../structures/Functions';
+import { Command, ContextCommand } from '../utils/otherTypes';
 
 const cooldownCategoriesHigh = cooldowns.cooldownCategoriesHigh
 const cooldownCommandsHigh = cooldowns.cooldownCommandsHigh

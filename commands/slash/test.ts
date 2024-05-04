@@ -1,8 +1,8 @@
-import { ErrySuccessEmbed } from '../../structures/Functions.mts';
+import { ErrySuccessEmbed } from '../../structures/Functions';
 import {
     getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName
-} from '../../structures/Language.mts';
-import { Command } from '../../utils/otherTypes.mts';
+} from '../../structures/Language';
+import { Command } from '../../utils/otherTypes';
 
 export default {
     name: getSlashCommandName("test"),

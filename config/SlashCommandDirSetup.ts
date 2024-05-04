@@ -1,4 +1,4 @@
-import { dirSetup as dirSetupType } from '../utils/otherTypes.mts';
+import { dirSetup as dirSetupType } from '../utils/otherTypes';
 
 export const dirSetup = [
     {

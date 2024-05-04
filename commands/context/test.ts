@@ -1,5 +1,5 @@
-import { ErrySuccessEmbed } from '../../structures/Functions.mts';
-import { ContextCommand } from '../../utils/otherTypes.mts';
+import { ErrySuccessEmbed } from '../../structures/Functions';
+import { ContextCommand } from '../../utils/otherTypes';
 
 export default {
     name: "test",

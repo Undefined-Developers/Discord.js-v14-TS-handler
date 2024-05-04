@@ -1,11 +1,11 @@
-import CrossHost from 'discord-cross-hosting';
+import { Client } from 'discord-cross-hosting';
 import { ClusterManager, HeartbeatManager, ReClusterManager } from 'discord-hybrid-sharding';
 
-import { getConfig } from '../config/config.mts';
+import { getConfig } from '../config/config';
 
 export function startSharderManager() {
 
-  const client = new CrossHost.Client({
+  const client = new Client({
     agent: 'bot',
     host: getConfig().bridge_host,
     port: getConfig().bridge_port,
@@ -17,7 +17,7 @@ export function startSharderManager() {
   client.connect();
 
   
-  const botPath = `${process.cwd()}/bot.mts`;
+  const botPath = `${process.cwd()}/bot.ts`;
   const manager = new ClusterManager(botPath, {
       totalShards: 1,
       shardsPerClusters: 1,

@@ -1,4 +1,4 @@
-import { BotClient } from "./structures/BotClient.mts";
+import { BotClient } from './structures/BotClient';
 
 const client = new BotClient();
 

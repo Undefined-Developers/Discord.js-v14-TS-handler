@@ -24,4 +24,4 @@ package-lock.json
 .vscode
 
 #Config
-config/config.mts
+config/config.ts

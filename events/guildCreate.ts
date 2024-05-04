@@ -1,6 +1,6 @@
 import { EmbedBuilder, Guild } from 'discord.js';
 
-import { BotClient } from '../structures/BotClient.mts';
+import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient, guild: Guild) => {
     if (!guild) return;
