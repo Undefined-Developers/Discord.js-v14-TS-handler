@@ -22,9 +22,8 @@ const default_options = {
   success: true,
   warn: true,
   log: true,
-  logLevel: getConfig().logLevel,
   webhook: {
-    link: getConfig().webhook,
+    link: getConfig().logLevel.webhook,
     debug: true,
     info: true,
     error: true,
