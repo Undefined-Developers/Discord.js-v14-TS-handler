@@ -161,8 +161,8 @@ export class BotClient extends Client {
                   }
                   if(thisDirSetup.localizations?.length) {
                       for(const localization of thisDirSetup.localizations) {
-                          if(localization.name) subSlash.setNameLocalization(localization.name[0], localization.name[1]);
-                          if(localization.description) subSlash.setDescriptionLocalization(localization.description[0], localization.description[1]);
+                          if(localization.name) subSlash.setNameLocalization(localization.language, localization.name);
+                          if(localization.description) subSlash.setDescriptionLocalization(localization.language, localization.description);
                       }
                   }
                   const slashCommands = await promises.readdir(`${process.cwd()}${path}/${dir}/`)
@@ -186,8 +186,8 @@ export class BotClient extends Client {
                                   Group.setName(groupDirSetup.name.toLowerCase()).setDescription(groupDirSetup.description || "Temp_Desc");
                                   if(groupDirSetup.localizations?.length) {
                                       for(const localization of groupDirSetup.localizations) {
-                                          if(localization.name) Group.setNameLocalization(localization.name[0], localization.name[1]);
-                                          if(localization.description) Group.setDescriptionLocalization(localization.description[0], localization.description[1]);
+                                          if(localization.name) Group.setNameLocalization(localization.language, localization.name);
+                                          if(localization.description) Group.setDescriptionLocalization(localization.language, localization.description);
                                       }
                                   }
                                   for (let sFile of slashCommands) {

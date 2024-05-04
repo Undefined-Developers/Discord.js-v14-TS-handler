@@ -91,8 +91,9 @@ export type groupDirSetup = {
 }
 
 export type groupDirSetupLocalizations = {
-    name: [LocaleString, string], 
-    description: [LocaleString, string]
+    language: LocaleString
+    name: string
+    description: string
 }
 
 export type BotCounters = {

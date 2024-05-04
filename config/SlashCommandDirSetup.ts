@@ -10,8 +10,9 @@ export const dirSetup = [
 
         /* localizations: [
             {
-                name: ["en-US", "info"]
-                description: ["en-US", "Get Information about Server/User/Bot/..."]
+                language: "en-US"
+                name: "info"
+                description: "Get Information about Server/User/Bot/..."
             }
         ]*/
         
