@@ -31,7 +31,6 @@ export class BotClient extends Client {
     cluster: ClusterClient<DjsDiscordClient>
     commands: Collection<string, Command|ContextCommand>
     eventPaths: Collection<string, {eventName: string, path: string}>
-    cooldowns: { user: Collection<string, Collection<string, number>>; guild: Collection<string, Collection<string, number>>; global: Collection<string, number[]>; autocomplete: Collection<string, Collection<string, number>>; };
     cache: RedisClientType
     functions: ErryFunctions
     db: PrismaClient
@@ -51,12 +50,6 @@ export class BotClient extends Client {
         this.logger = new Logger({ prefix: "     Erry    ", ...this.config.logLevel });
         this.commands = new Collection();
         this.eventPaths = new Collection();
-        this.cooldowns = {
-          user: new Collection(),
-          guild: new Collection(),
-          global: new Collection(),
-          autocomplete: new Collection()
-        };
         this.allCommands = [];
         this.fetchedApplication = [],
         this.functions = new ErryFunctions(this);

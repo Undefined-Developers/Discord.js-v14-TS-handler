@@ -14,7 +14,7 @@ export class ErryLanguage {
   constructor() {
       this.config = getConfig()
       this.emoji = getEmojis()
-      this.logger = new Logger({prefix: "Erry Language ", ...this.config.logLevel})
+      this.logger = new Logger({prefix: "Erry Language", ...this.config.logLevel})
   }
   translate(key: string, language: LocaleString, additional?: {[key: string]: string}, replace?: boolean): string {
     try{

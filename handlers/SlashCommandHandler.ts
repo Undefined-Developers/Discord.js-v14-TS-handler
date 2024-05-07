@@ -1,6 +1,5 @@
 import {
-    Collection, CommandInteraction, EmbedBuilder, LocaleString, PermissionFlagsBits,
-    PermissionsBitField
+    CommandInteraction, EmbedBuilder, LocaleString, PermissionFlagsBits, PermissionsBitField
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
@@ -103,16 +102,13 @@ export async function checkCommand(client: BotClient, command: Command|ContextCo
         }
     }
 
-    if(!dontCheckCooldown && isOnCooldown(client, command, ctx, es, ls)) return false;
+    if(!dontCheckCooldown && (await isOnCooldown(client, command, ctx, es, ls))) return false;
 
     return true;
 }
 
-export function isOnCooldown(client: BotClient, command: Command|ContextCommand, ctx: CommandInteraction, es: Embed, ls: LocaleString): boolean {
+export async function isOnCooldown(client: BotClient, command: Command|ContextCommand, ctx: CommandInteraction, es: Embed, ls: LocaleString): Promise<boolean> {
     const [ userId, guildId ] = [ ctx.user.id, ctx.guild?.id ?? "" ];
-    if(!client.cooldowns.user.get(userId)) client.cooldowns.user.set(userId, new Collection());
-    if(!client.cooldowns.guild.get(guildId)) client.cooldowns.guild.set(guildId, new Collection());
-    if(!client.cooldowns.global.get(userId)) client.cooldowns.global.set(userId, []);
     
     const defaultCooldown =
         cooldownCategoriesHigh.includes(command.category || "") || cooldownCommandsHigh.includes(command.name)
@@ -121,8 +117,8 @@ export function isOnCooldown(client: BotClient, command: Command|ContextCommand,
         ? defaultCooldownMs : 0;
     
     if(command.cooldown?.user) {
-        const userCooldowns = client.cooldowns.user.get(userId);
-        const commandCooldown = userCooldowns?.get(command.name) || 0;
+        const userCooldowns = new Map(JSON.parse(await client.cache.get(`userCooldown_${userId}`) || "[]")) as Map<string, number>;
+        const commandCooldown = userCooldowns.get(command.name) || 0;
         if(commandCooldown > Date.now()) {
             return ctx.reply({
                 ephemeral: true,
@@ -132,11 +128,11 @@ export function isOnCooldown(client: BotClient, command: Command|ContextCommand,
             }).catch(() => null), true;
         }
         (userCooldowns as Map<string, number>).set(command.name, Date.now()+(command.cooldown?.user||0))
-        client.cooldowns.user.set(guildId, userCooldowns as Collection<string, number>);
+        await client.cache.set(`userCooldown_${guildId}`, JSON.stringify(Array.from(userCooldowns.entries())));
     }
     if(command.cooldown?.guild ?? defaultCooldown) {
-        const guildCooldowns = client.cooldowns.guild.get(guildId);
-        const commandCooldown = (guildCooldowns as Map<string, number>).get(command.name) || 0;
+        const guildCooldowns = new Map(JSON.parse(await client.cache.get(`guildCooldown_${userId}`) || "[]")) as Map<string, number>;
+        const commandCooldown = guildCooldowns.get(command.name) || 0;
         if(commandCooldown > Date.now()) {
             return ctx.reply({
                 ephemeral: true,
@@ -145,12 +141,12 @@ export function isOnCooldown(client: BotClient, command: Command|ContextCommand,
                 ],
             }).catch(() => null), true;
         }
-        (guildCooldowns as Map<string, number>).set(command.name, Date.now() + (command.cooldown?.guild ?? defaultCooldown))
-        client.cooldowns.guild.set(guildId, guildCooldowns as Collection<string, number>);
+        guildCooldowns.set(command.name, Date.now() + (command.cooldown?.guild ?? defaultCooldown))
+        await client.cache.set(`guildCooldown_${guildId}`, JSON.stringify(Array.from(guildCooldowns.entries())));
     }
-    const globalCooldowns = client.cooldowns.global.get(userId);
+    const globalCooldowns = JSON.parse(await client.cache.get(`globalCooldown_${userId}`) || "[]");
     const allCools = [...(globalCooldowns || []), Date.now()].filter( x => (Date.now() - x) <= maximumCoolDownCommands.time);
-    client.cooldowns.global.set(userId, allCools);
+    await client.cache.set(`globalCooldown_${userId}`, JSON.stringify(allCools))
     if(allCools.length > maximumCoolDownCommands.amount) {
         return ctx.reply({
             ephemeral: true,
