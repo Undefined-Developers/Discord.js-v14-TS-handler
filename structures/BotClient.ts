@@ -73,7 +73,7 @@ export class BotClient extends Client {
 
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Cache`);
-        await this.cache.connect();
+        await this.cache.connect().then(e => {this.logger.debug("✅ Cache ready")});
 
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Events`);

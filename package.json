@@ -4,7 +4,17 @@
   "description": "Powerful discord.js v14 handler",
   "main": "index.ts",
   "scripts": {
-    "init": "npm install && npx tsx utils/init.ts && npx prisma db push && echo SETUP IS DONE"
+    "init": "npm install && npx tsx utils/init.ts && npx prisma db push && echo SETUP IS DONE",
+    "start": "FORCE_COLOR=1 pm2 start --name 'erry_test' npx -- tsx index.ts && pm2 save && pm2 log 'erry_test'",
+    "restart": "pm2 restart 'erry_test' && pm2 log 'erry_test'",
+    "stop": "pm2 stop 'erry_test'",
+    "delete": "pm2 delete 'erry_test' && pm2 save --force",
+    "bridge_start": "FORCE_COLOR=1 pm2 start --name 'bridge_erry_test' npx -- tsx bridge/index.ts && pm2 save && pm2 log 'bridge_erry_test'",
+    "bridge_restart": "pm2 restart 'bridge_erry_test' && pm2 log 'bridge_erry_test'",
+    "bridge_stop": "pm2 stop 'bridge_erry_test'",
+    "bridge_delete": "pm2 delete 'bridge_erry_test' && pm2 save --force",
+    "delete_all": "pm2 delete 'bridge_erry_test' 'erry_test' && pm2 save --force",
+    "start_all": "FORCE_COLOR=1 pm2 start --name 'bridge_erry_test' npx -- tsx bridge/index.ts && FORCE_COLOR=1 pm2 start --name 'erry_test' npx -- tsx index.ts && pm2 save --force && pm2 log 'erry_test'"
   },
   "repository": {
     "type": "git",
@@ -28,11 +38,11 @@
   },
   "dependencies": {
     "@prisma/client": "^5.13.0",
-    "@types/node": "^20.12.8",
+    "@types/node": "^20.12.10",
     "chalk": "^5.3.0",
     "discord-cross-hosting": "^2.3.8",
     "discord-hybrid-sharding": "^2.2.0",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
     "envfile": "^7.1.0",
     "moment": "^2.30.1",

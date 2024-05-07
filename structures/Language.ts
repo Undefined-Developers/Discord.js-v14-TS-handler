@@ -14,7 +14,7 @@ export class ErryLanguage {
   constructor() {
       this.config = getConfig()
       this.emoji = getEmojis()
-      this.logger = new Logger({})
+      this.logger = new Logger({prefix: "Erry Language ", ...this.config.logLevel})
   }
   translate(key: string, language: LocaleString, additional?: {[key: string]: string}, replace?: boolean): string {
     try{
@@ -71,6 +71,7 @@ export class ErryLanguage {
       const curPath = `${process.cwd()}${path}/${dir}`;
       const language = await import(globalFilePath(curPath), {assert: {type: "json"}}).then(i => i.default);
       languages[dir.split(".json")[0]] = language
+      this.logger.debug(`✅ Language Loaded: ${dir.split(".json")[0]}`)
     }
   }
 }
