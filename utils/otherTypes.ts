@@ -190,3 +190,7 @@ export const optionTypes = {
     */
     numberchoices: "numberchoices"
 }
+export const contextTypes = {
+    Message: "Message",
+    User: "User"
+}

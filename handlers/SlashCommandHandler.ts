@@ -30,7 +30,7 @@ export async function slashCommandHandler(client: BotClient, interaction: Comman
         try {
             if(!(await checkCommand(client, slashCmd, interaction, es, ls))) return;
             var commandName = interaction.isContextMenuCommand() ? 'shortName' in slashCmd && slashCmd.shortName : interaction.isChatInputCommand() ? `${interaction.commandName}${interaction.options.getSubcommandGroup(false) ? `_${interaction.options.getSubcommandGroup(false)}` : ``}${interaction.options.getSubcommand(false) ? `_${interaction.options.getSubcommand(false)}` : ``}` : ""
-            client.logger.debug(`Used /${commandName} in ${interaction?.guild?.name ? interaction?.guild?.name : "DMS"} (${interaction?.guild?.id}) by ${interaction.user.globalName || interaction.user.username} (${interaction.user.id})`)
+            client.logger.debug(`Used /${commandName}\n\t\t(${interaction?.guild?.name ? interaction?.guild?.name : "DMS"} (${interaction?.guild?.id}) by ${interaction.user.globalName || interaction.user.username} (${interaction.user.id}))`)
             interaction.isContextMenuCommand() && await slashCmd.execute(client, interaction, es = client.config.embed, ls = client.config.defaultLanguage, GuildSettings);
             interaction.isChatInputCommand() && await (slashCmd as Command).execute(client, interaction, es = client.config.embed, ls = client.config.defaultLanguage, GuildSettings);
         } catch (e) {

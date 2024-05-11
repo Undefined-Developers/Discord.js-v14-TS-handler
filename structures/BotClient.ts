@@ -198,7 +198,7 @@ export class BotClient extends Client {
                                                   if(localization.description) Slash.setDescriptionLocalization(localization.description[0], localization.description[1]);
                                               }
                                           }
-                                          this.buildOptions(command, Slash)
+                                          this.buildCommandOptions(command, Slash)
                                           return Slash;
                                       });
                                       command.commandId = this.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
@@ -225,7 +225,7 @@ export class BotClient extends Client {
                                       if(localization.description) Slash.setDescriptionLocalization(localization.description[0], localization.description[1]);
                                   }
                               }
-                              this.buildOptions(command, Slash)
+                              this.buildCommandOptions(command, Slash)
                               return Slash;
                           });
                           command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
@@ -257,7 +257,7 @@ export class BotClient extends Client {
                           if(localization.description) Slash.setDescriptionLocalization(localization.description[0], localization.description[1]);
                       }
                   }
-                  this.buildOptions(command, Slash);
+                  this.buildCommandOptions(command, Slash);
                   command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
                   command.slashCommandKey = `/${command.name}`
                   command.mention = `<${command.slashCommandKey}:${command.commandId}>`
@@ -351,7 +351,7 @@ export class BotClient extends Client {
         this.logger.debug(`SLASH-CMDS | Set ${this.commands.size} guild slashCommands!`)
         return true;
     }
-    buildOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder) {
+    buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder) {
         if (command.options?.length) {
             for (const option of command.options) {
                 if(option.type.toLowerCase() === optionTypes.attachment) {

@@ -1,9 +1,9 @@
 import { ErrySuccessEmbed } from '../../structures/Functions';
-import { ContextCommand } from '../../utils/otherTypes';
+import { ContextCommand, contextTypes } from '../../utils/otherTypes';
 
 export default {
     name: "test",
-    type: "Message", // "Message" or "User" only
+    type: contextTypes.Message, // "Message" or "User" only
     async execute(client, interaction, es, ls, GuildSettings) {
         interaction.reply({embeds:[
             new ErrySuccessEmbed(es)

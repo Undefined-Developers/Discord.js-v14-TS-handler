@@ -58,7 +58,7 @@ export type webhookOptions = {
 }
 
 interface inputOption {
-  prefix?: string,
+  prefix: string,
   debug?: boolean,
   info?: boolean,
   error?: boolean,

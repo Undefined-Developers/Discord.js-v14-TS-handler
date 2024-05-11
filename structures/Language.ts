@@ -69,10 +69,17 @@ export class ErryLanguage {
     const dirs = await readdir(`${process.cwd()}${path}`)
     for(const dir of dirs) {
       const curPath = `${process.cwd()}${path}/${dir}`;
-      const language = await import(globalFilePath(curPath), {assert: {type: "json"}}).then(i => i.default);
+      const language = await import(globalFilePath(curPath)).then(i => i.default);
       languages[dir.split(".json")[0]] = language
       this.logger.debug(`✅ Language Loaded: ${dir.split(".json")[0]}`)
     }
+  }
+  translatePermissions(permissionsArray: string[], ls: LocaleString) {
+    if (!permissionsArray || permissionsArray.length <= 0) return this.translate("common.error", ls);
+    var result = permissionsArray.map((permission, index) => {
+      return this.translate(`common.permissions.${permission}`, ls)
+    })
+    return result;
   }
 }
 
