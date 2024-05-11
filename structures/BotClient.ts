@@ -132,146 +132,167 @@ export class BotClient extends Client {
       }
       return true;
     }
-    async loadCommands(path="/commands/slash") {
-      try {
+    async loadCommands(path = "/commands/slash") {
+        try {
           this.allCommands = [];
           this.commands.clear();
-          const dirs = await promises.readdir(`${process.cwd()}${path}`);
-          for(const dir of dirs) {
-              if (!dir.endsWith(".ts") && (await promises.lstat(`${process.cwd()}${path}/${dir}/`).catch(() => null))?.isDirectory?.()) {
-                  const thisDirSetup = dirSetup.find(x => x.Folder.toLowerCase() === dir.toLowerCase());
-                  if (!thisDirSetup) {
-                      this.logger.stringError(`Could not find the DirSetup for ${dir}`);
-                      continue;
-                  }
-                  const subSlash = new SlashCommandBuilder().setName(String(thisDirSetup.name).toLowerCase()).setDescription(String(thisDirSetup.description)).setDMPermission(false)
-                  
-                  if(thisDirSetup.defaultPermissions) {
-                      subSlash.setDefaultMemberPermissions(thisDirSetup.defaultPermissions);
-                  }
-                  if(thisDirSetup.dmPermissions) {
-                      subSlash.setDefaultMemberPermissions(thisDirSetup.dmPermissions);
-                  }
-                  if(thisDirSetup.localizations?.length) {
-                      for(const localization of thisDirSetup.localizations) {
-                          if(localization.name) subSlash.setNameLocalization(localization.language, localization.name);
-                          if(localization.description) subSlash.setDescriptionLocalization(localization.language, localization.description);
-                      }
-                  }
-                  const slashCommands = await promises.readdir(`${process.cwd()}${path}/${dir}/`)
-                  for (let file of slashCommands) {
-                      const curPath = `${process.cwd()}${path}/${dir}/${file}`;
-                      if ((await promises.lstat(curPath).catch(e => this.logger.error(e)))?.isDirectory?.()) {
-                          const groupPath = curPath;
-                          const groupDirSetup = thisDirSetup.groups?.find(x => x.Folder.toLowerCase() == file.toLowerCase())
-                          if (!groupDirSetup) {
-                              this.logger.stringError(`Could not find the groupDirSetup for ${dir}/${file}`);
-                              continue;
-                          }
-                          const slashCommands = await promises.readdir(groupPath).then(x => x.filter(v => v.endsWith(".ts")));
-                          if (slashCommands?.length) {
-                              var commands: {[key: string]: Command} = {}
-                              for (let sFile of slashCommands) {
-                                  const groupCurPath = `${groupPath}/${sFile}`;
-                                  commands[sFile] = await import(globalFilePath(groupCurPath)).then(x => x.default);
-                              }
-                              subSlash.addSubcommandGroup(Group => {
-                                  Group.setName(groupDirSetup.name.toLowerCase()).setDescription(groupDirSetup.description || "Temp_Desc");
-                                  if(groupDirSetup.localizations?.length) {
-                                      for(const localization of groupDirSetup.localizations) {
-                                          if(localization.name) Group.setNameLocalization(localization.language, localization.name);
-                                          if(localization.description) Group.setDescriptionLocalization(localization.language, localization.description);
-                                      }
-                                  }
-                                  for (let sFile of slashCommands) {
-                                      const groupCurPath = `${groupPath}/${sFile}`;
-                                      const command = commands[sFile] as Command;
-                                      if (!command.name) {
-                                          this.logger.stringError(`${groupCurPath} not containing a Command-Name`);
-                                          continue;
-                                      }
-                                      Group.addSubcommand(Slash => {
-                                          Slash.setName(command.name).setDescription(command.description || "Empty Description");
-                                          if(command.localizations?.length) {
-                                              for(const localization of command.localizations) {
-                                                  if(localization.name) Slash.setNameLocalization(localization.name[0], localization.name[1]);
-                                                  if(localization.description) Slash.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                                              }
-                                          }
-                                          this.buildCommandOptions(command, Slash)
-                                          return Slash;
-                                      });
-                                      command.commandId = this.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
-                                      command.slashCommandKey = `/${subSlash.name} ${Group.name} ${command.name}`
-                                      command.mention = `<${command.slashCommandKey}:${command.commandId}>`
-                                      this.commands.set("groupcmd_" + String(groupDirSetup.name).toLowerCase() + "_" + String(thisDirSetup.name).toLowerCase() + "_" + command.name, command)
-                                      this.logger.debug(`✅ Group Command Loaded: /${thisDirSetup.name} ${groupDirSetup.name} ${command.name}`);
-                                  }
-                                  return Group;
-                              });
-                          }
-                      }
-                      else {
-                          const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
-                          if (!command.name) {
-                              this.logger.stringError(`${curPath} not containing a Command-Name`);
-                              continue;
-                          }
-                          subSlash.addSubcommand(Slash => {
-                              Slash.setName(command.name).setDescription(command.description || "Temp_Desc")
-                              if(command.localizations?.length) {
-                                  for(const localization of command.localizations) {
-                                      if(localization.name) Slash.setNameLocalization(localization.name[0], localization.name[1]);
-                                      if(localization.description) Slash.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                                  }
-                              }
-                              this.buildCommandOptions(command, Slash)
-                              return Slash;
-                          });
-                          command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
-                          command.slashCommandKey = `/${subSlash.name} ${command.name}`
-                          command.mention = `<${command.slashCommandKey}:${command.commandId}>`
-                          this.commands.set("subcmd_" + String(thisDirSetup.name).toLowerCase() + "_" + command.name, command)
-                          this.logger.debug(`✅ ⠀⠀Sub Command Loaded: /${thisDirSetup.name} ${command.name}`);
-                      }
-                  }
-                  this.allCommands.push(subSlash.toJSON());
+          const basePath = `${process.cwd()}${path}`;
+          const dirs = await promises.readdir(basePath);
+          const dirStats = await Promise.all(dirs.map(dir => promises.lstat(`${basePath}/${dir}`).catch(() => null)));
+          
+          for (let i = 0; i < dirs.length; i++) {
+            const dir = dirs[i];
+            const stat = dirStats[i];
+            
+            if (!dir.endsWith(".ts") && stat?.isDirectory?.()) {
+              const thisDirSetup = dirSetup.find(x => x.Folder.toLowerCase() === dir.toLowerCase());
+              if (!thisDirSetup) {
+                this.logger.stringError(`Could not find the DirSetup for ${dir}`);
+                continue;
               }
-              else {
-                  const curPath = `${process.cwd()}${path}/${dir}`;
+              
+              const subSlash = new SlashCommandBuilder()
+                .setName(String(thisDirSetup.name).toLowerCase())
+                .setDescription(String(thisDirSetup.description))
+                .setDMPermission(false);
+              
+              if (thisDirSetup.defaultPermissions) {
+                subSlash.setDefaultMemberPermissions(thisDirSetup.defaultPermissions);
+              }
+              
+              if (thisDirSetup.dmPermissions) {
+                subSlash.setDefaultMemberPermissions(thisDirSetup.dmPermissions);
+              }
+              
+              if (thisDirSetup.localizations?.length) {
+                for (const localization of thisDirSetup.localizations) {
+                  if (localization.name) subSlash.setNameLocalization(localization.language, localization.name);
+                  if (localization.description) subSlash.setDescriptionLocalization(localization.language, localization.description);
+                }
+              }
+              
+              const dirPath = `${basePath}/${dir}`;
+              const slashCommands = await promises.readdir(dirPath);
+              const commandStats = await Promise.all(slashCommands.map(file => promises.lstat(`${dirPath}/${file}`).catch(e => this.logger.error(e))));
+              
+              for (let j = 0; j < slashCommands.length; j++) {
+                const file = slashCommands[j];
+                const commandStat = commandStats[j];
+                
+                const curPath = `${dirPath}/${file}`;
+                if (commandStat?.isDirectory?.()) {
+                  const groupPath = curPath;
+                  const groupDirSetup = thisDirSetup.groups?.find(x => x.Folder.toLowerCase() == file.toLowerCase())
+                  if (!groupDirSetup) {
+                    this.logger.stringError(`Could not find the groupDirSetup for ${dir}/${file}`);
+                    continue;
+                  }
+                  const slashCommands = await promises.readdir(groupPath).then(x => x.filter(v => v.endsWith(".ts")));
+                  if (slashCommands?.length) {
+                    var commands: {[key: string]: Command} = {}
+                    for (let sFile of slashCommands) {
+                      const groupCurPath = `${groupPath}/${sFile}`;
+                      commands[sFile] = await import(globalFilePath(groupCurPath)).then(x => x.default);
+                    }
+                    subSlash.addSubcommandGroup(Group => {
+                      Group.setName(groupDirSetup.name.toLowerCase()).setDescription(groupDirSetup.description || "Temp_Desc");
+                      if(groupDirSetup.localizations?.length) {
+                        for(const localization of groupDirSetup.localizations) {
+                          if(localization.name) Group.setNameLocalization(localization.language, localization.name);
+                          if(localization.description) Group.setDescriptionLocalization(localization.language, localization.description);
+                        }
+                      }
+                      for (let sFile of slashCommands) {
+                        const groupCurPath = `${groupPath}/${sFile}`;
+                        const command = commands[sFile] as Command;
+                        if (!command.name) {
+                          this.logger.stringError(`${groupCurPath} not containing a Command-Name`);
+                          continue;
+                        }
+                        Group.addSubcommand(Slash => {
+                          Slash.setName(command.name).setDescription(command.description || "Empty Description");
+                          if(command.localizations?.length) {
+                            for(const localization of command.localizations) {
+                              if(!localization.language) continue;
+                              if(localization.name) Slash.setNameLocalization(localization.language, localization.name);
+                              if(localization.description) Slash.setDescriptionLocalization(localization.language, localization.description);
+                            }
+                          }
+                          this.buildCommandOptions(command, Slash)
+                          return Slash;
+                        });
+                        command.commandId = this.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
+                        command.slashCommandKey = `/${subSlash.name} ${Group.name} ${command.name}`
+                        command.mention = `<${command.slashCommandKey}:${command.commandId}>`
+                        this.commands.set("groupcmd_" + String(groupDirSetup.name).toLowerCase() + "_" + String(thisDirSetup.name).toLowerCase() + "_" + command.name, command)
+                        this.logger.debug(`✅ Group Command Loaded: /${thisDirSetup.name} ${groupDirSetup.name} ${command.name}`);
+                      }
+                      return Group;
+                    });
+                  }
+                } else {
                   const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
                   if (!command.name) {
-                      this.logger.stringError(`${curPath} not containing a Command-Name`);
-                      continue;
+                    this.logger.stringError(`${curPath} not containing a Command-Name`);
+                    continue;
                   }
-                  const Slash = new SlashCommandBuilder().setName(command.name).setDescription(command.description || "Temp_Desc").setDMPermission(false);
-                  if(command.defaultPermissions) {
-                      Slash.setDefaultMemberPermissions(command.defaultPermissions);
-                  }
-                  if(command.dmPermissions) {
-                      Slash.setDefaultMemberPermissions(command.dmPermissions);
-                  }
-                  if(command.localizations?.length) {
+                  subSlash.addSubcommand(Slash => {
+                    Slash.setName(command.name).setDescription(command.description || "Temp_Desc")
+                    if(command.localizations?.length) {
                       for(const localization of command.localizations) {
-                          if(localization.name) Slash.setNameLocalization(localization.name[0], localization.name[1]);
-                          if(localization.description) Slash.setDescriptionLocalization(localization.description[0], localization.description[1]);
+                        if(!localization.language) continue;
+                        if(localization.name) Slash.setNameLocalization(localization.language, localization.name);
+                        if(localization.description) Slash.setDescriptionLocalization(localization.language, localization.description);
                       }
-                  }
-                  this.buildCommandOptions(command, Slash);
-                  command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
-                  command.slashCommandKey = `/${command.name}`
+                    }
+                    this.buildCommandOptions(command, Slash)
+                    return Slash;
+                  });
+                  command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
+                  command.slashCommandKey = `/${subSlash.name} ${command.name}`
                   command.mention = `<${command.slashCommandKey}:${command.commandId}>`
-                  this.commands.set("slashcmd_" + command.name, command)
-                  this.logger.debug(`✅ Slash Command Loaded: /${command.name}`);
-                  this.allCommands.push(Slash.toJSON());
-                  continue;
+                  this.commands.set("subcmd_" + String(thisDirSetup.name).toLowerCase() + "_" + command.name, command)
+                  this.logger.debug(`✅ ⠀⠀Sub Command Loaded: /${thisDirSetup.name} ${command.name}`);
+                }
               }
+              
+              this.allCommands.push(subSlash.toJSON());
+            } else {
+              const curPath = `${basePath}/${dir}`;
+              const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
+              if (!command.name) {
+                this.logger.stringError(`${curPath} not containing a Command-Name`);
+                continue;
+              }
+              const Slash = new SlashCommandBuilder().setName(command.name).setDescription(command.description || "Temp_Desc").setDMPermission(false);
+              if(command.defaultPermissions) {
+                Slash.setDefaultMemberPermissions(command.defaultPermissions);
+              }
+              if(command.dmPermissions) {
+                Slash.setDefaultMemberPermissions(command.dmPermissions);
+              }
+              if(command.localizations?.length) {
+                for(const localization of command.localizations) {
+                  if(!localization.language) continue;
+                  if(localization.name) Slash.setNameLocalization(localization.language, localization.name);
+                  if(localization.description) Slash.setDescriptionLocalization(localization.language, localization.description);
+                }
+              }
+              this.buildCommandOptions(command, Slash);
+              command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
+              command.slashCommandKey = `/${command.name}`
+              command.mention = `<${command.slashCommandKey}:${command.commandId}>`
+              this.commands.set("slashcmd_" + command.name, command)
+              this.logger.debug(`✅ Slash Command Loaded: /${command.name}`);
+              this.allCommands.push(Slash.toJSON());
+            }
           }
-      } catch (e) {
+        } catch (e) {
           this.logger.error(e as Error);
-      }
-      return true;
-    }
+        }
+        
+        return true;
+    }      
     async loadContextMenu(path="/commands/context") {
         try {
             const dirs = await promises.readdir(`${process.cwd()}${path}`);

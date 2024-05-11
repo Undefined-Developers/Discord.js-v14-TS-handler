@@ -136,7 +136,11 @@ export function getSlashCommandLocalizations(path: string): commandLocalizations
     let current: NestedLanguageType | string = (languages[language] as NestedLanguageType)?.commands;
 
     if (typeof current === 'undefined') {
-      results.push({name: [language as LocaleString, "undefined"], description: [language as LocaleString, "undefined"]});
+      results.push({
+        language: language as LocaleString, 
+        name: "undefined", 
+        description: "undefined"
+      });
       continue;
     }
 
@@ -150,11 +154,12 @@ export function getSlashCommandLocalizations(path: string): commandLocalizations
 
     if (current) {
       results.push({
-        name: [language as LocaleString, ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.name ?? "undefined"],
-        description: [language as LocaleString, ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.description ?? "No Description Provided"]
+        language: language as LocaleString, 
+        name: ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.name ?? "undefined",
+        description: ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.description ?? "No Description Provided"
       });
     } else {
-      results.push({name: [language as LocaleString, "undefined"], description: [language as LocaleString, "undefined"]});
+      results.push({language: language as LocaleString, name: "undefined", description: "undefined"});
     }
   }
 
