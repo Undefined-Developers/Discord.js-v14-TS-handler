@@ -293,39 +293,44 @@ export class BotClient extends Client {
         
         return true;
     }      
-    async loadContextMenu(path="/commands/context") {
+    async loadContextMenu(path = "/commands/context") {
         try {
-            const dirs = await promises.readdir(`${process.cwd()}${path}`);
-            for(const dir of dirs) {
-                const curPath = `${process.cwd()}${path}/${dir}`;
-                const command = await import(globalFilePath(curPath)).then(x => x.default) as ContextCommand;
-                if (!command.name) {
-                    this.logger.stringError(`${curPath} not containing a Command-Name`);
-                    continue;
-                }
-                const Slash = new ContextMenuCommandBuilder()
-                    .setName(command.name)
-                    .setType(ApplicationCommandType[command.type]);
-                if(command.localizations) Slash.setNameLocalizations(command.localizations)
-                if(command.defaultPermissions) {
-                    Slash.setDefaultMemberPermissions(command.defaultPermissions);
-                }
-                if(command.dmPermissions) {
-                    Slash.setDefaultMemberPermissions(command.dmPermissions);
-                }
-                command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
-                command.slashCommandKey = `/${command.name}`
-                command.mention = `<${command.slashCommandKey}:${command.commandId}>`
-                command.shortName = dir.split(".ts").join("")
-                this.commands.set("context_" + command.name, command)
-                this.logger.debug(`✅ Context Command Loaded: /${command.name}`);
-                this.allCommands.push(Slash.toJSON());
+          const basePath = `${process.cwd()}${path}`;
+          const dirs = await promises.readdir(basePath);
+          const commands = await Promise.all(dirs.map(dir => import(globalFilePath(`${basePath}/${dir}`)).then(x => x.default)));
+          
+          for (let i = 0; i < dirs.length; i++) {
+            const dir = dirs[i];
+            const command = commands[i] as ContextCommand;
+            
+            if (!command.name) {
+              this.logger.stringError(`${basePath}/${dir} not containing a Command-Name`);
+              continue;
             }
+            
+            const Slash = new ContextMenuCommandBuilder()
+              .setName(command.name)
+              .setType(ApplicationCommandType[command.type]);
+            
+            if (command.localizations) Slash.setNameLocalizations(command.localizations);
+            if (command.defaultPermissions) Slash.setDefaultMemberPermissions(command.defaultPermissions);
+            if (command.dmPermissions) Slash.setDefaultMemberPermissions(command.dmPermissions);
+            
+            command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
+            command.slashCommandKey = `/${command.name}`;
+            command.mention = `<${command.slashCommandKey}:${command.commandId}>`;
+            command.shortName = dir.split(".ts").join("");
+            
+            this.commands.set("context_" + command.name, command);
+            this.logger.debug(`✅ Context Command Loaded: /${command.name}`);
+            this.allCommands.push(Slash.toJSON());
+          }
         } catch (e) {
-            this.logger.error(e as Error);
+          this.logger.error(e as Error);
         }
+        
         return true;
-    }
+    }      
     async prepareCommands() {
         const allSlashs = await this.application?.commands.fetch(undefined)
             .then(x => [...x.values()])
