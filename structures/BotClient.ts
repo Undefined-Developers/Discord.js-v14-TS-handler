@@ -377,148 +377,66 @@ export class BotClient extends Client {
         this.logger.debug(`SLASH-CMDS | Set ${this.commands.size} guild slashCommands!`)
         return true;
     }
+    buildOption(op: any, option: any) {
+        op.setName(option.name.toLowerCase())
+            .setDescription(option.description || "TEMP_DESC")
+            .setRequired(!!option.required);
+    
+        if (option.localizations?.length) {
+            for (const localization of option.localizations) {
+                if (!localization.language) continue;
+                if (localization.name) op.setNameLocalization(localization.language, localization.name);
+                if (localization.description) op.setDescriptionLocalization(localization.language, localization.description);
+            }
+        }
+        return op;
+    }
     buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder) {
         if (command.options?.length) {
             for (const option of command.options) {
-                if(option.type.toLowerCase() === optionTypes.attachment) {
-                    Slash.addAttachmentOption(op => {
-                        op.setName(option.name.toLowerCase())
-                        .setDescription(option.description || "TEMP_DESC")
-                        .setRequired(!!option.required)
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        return op;
-                    })
-                }
-                if (option.type.toLowerCase() === optionTypes.channel) {
+                const type = option.type.toLowerCase();
+                if (type === optionTypes.attachment) {
+                    Slash.addAttachmentOption(op => this.buildOption(op, option));
+                } else if (type === optionTypes.channel) {
                     Slash.addChannelOption(op => {
-                        op.setName(option.name.toLowerCase())
-                        .setDescription(option.description || "TEMP_DESC")
-                        .setRequired(!!option.required)
-                        if (option.channelTypes) op.addChannelTypes(...option.channelTypes)
-                        
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
+                        op = this.buildOption(op, option);
+                        if (option.channelTypes) op.addChannelTypes(...option.channelTypes);
                         return op;
                     });
-                }
-                else if (option.type.toLowerCase() === optionTypes.number) {
+                } else if (type === optionTypes.number || type === optionTypes.numberchoices) {
                     Slash.addNumberOption(op => {
-                        op.setName(option.name.toLowerCase())
-                            .setDescription(option.description || "TEMP_DESC")
-                            .setRequired(!!option.required)
-                            .setAutocomplete(!!option.autocomplete)
-    
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        if (option.max) op.setMaxValue(option.max)
-                        if (option.min) op.setMinValue(option.min)
-                        return op;
-                    })
-                }
-                else if (option.type.toLowerCase() === optionTypes.numberchoices) {
-                    Slash.addNumberOption(op => {
-                        op.setName(option.name.toLowerCase())
-                            .setDescription(option.description || "TEMP_DESC")
-                            .setRequired(!!option.required)
-                            .setAutocomplete(!!option.autocomplete)
-    
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        if (option.choices) {
+                        op = this.buildOption(op, option);
+                        op.setAutocomplete(!!option.autocomplete);
+                        if (option.max) op.setMaxValue(option.max);
+                        if (option.min) op.setMinValue(option.min);
+                        if (type === optionTypes.numberchoices && option.choices) {
                             const numberChoices = option.choices.filter((choice): choice is commandOptionChoiceNumber => typeof choice.value === 'number');
                             op.setChoices(...numberChoices);
                         }
                         return op;
-                    })
-                }
-                else if (option.type.toLowerCase() === optionTypes.role) {
-                    Slash.addRoleOption(op => {
-                        op.setName(option.name.toLowerCase())
-                            .setDescription(option.description || "TEMP_DESC")
-                            .setRequired(!!option.required)
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        return op;
                     });
-                }
-                else if (option.type.toLowerCase() === optionTypes.string) {
+                } else if (type === optionTypes.role) {
+                    Slash.addRoleOption(op => this.buildOption(op, option));
+                } else if (type === optionTypes.string || type === optionTypes.stringchoices) {
                     Slash.addStringOption(op => {
-                        op.setName(option.name.toLowerCase())
-                            .setDescription(option.description || "TEMP_DESC")
-                            .setRequired(!!option.required)
-                            .setAutocomplete(!!option.autocomplete)
-    
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        if (option.max) op.setMaxLength(option.max)
-                        if (option.min) op.setMinLength(option.min)
-                        return op;
-                    })
-                }
-                else if (option.type.toLowerCase() === optionTypes.stringchoices) {
-                    Slash.addStringOption(op => {
-                        op.setName(option.name.toLowerCase())
-                            .setDescription(option.description || "TEMP_DESC")
-                            .setRequired(!!option.required)
-                            .setAutocomplete(!!option.autocomplete)
-    
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        if (option.choices) {
+                        op = this.buildOption(op, option);
+                        op.setAutocomplete(!!option.autocomplete);
+                        if (option.max) op.setMaxLength(option.max);
+                        if (option.min) op.setMinLength(option.min);
+                        if (type === optionTypes.stringchoices && option.choices) {
                             const stringChoices = option.choices.filter((choice): choice is commandOptionChoiceString => typeof choice.value === 'string');
                             op.setChoices(...stringChoices);
                         }
                         return op;
                     });
-                }
-                else if (option.type.toLowerCase() === optionTypes.user) {
-                    Slash.addUserOption(op => {
-                        op.setName(option.name.toLowerCase())
-                            .setDescription(option.description || "TEMP_DESC")
-                            .setRequired(!!option.required)
-                        if(option.localizations?.length) {
-                            for(const localization of option.localizations) {
-                                if(localization.name) op.setNameLocalization(localization.name[0], localization.name[1]);
-                                if(localization.description) op.setDescriptionLocalization(localization.description[0], localization.description[1]);
-                            }
-                        }
-                        return op;
-                    });
+                } else if (type === optionTypes.user) {
+                    Slash.addUserOption(op => this.buildOption(op, option));
                 }
             }
         }
         return true;
     }
-}
+}    
 
 export function getDefaultClientOptions() {
     return {

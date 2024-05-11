@@ -61,8 +61,9 @@ export interface commandOption {
     localizations?: commandOptionLocalizations[]
 }
 export type commandOptionLocalizations = {
-    name: [LocaleString, string], 
-    description: [LocaleString, string]
+    language: LocaleString
+    name: string, 
+    description: string
 }
 export type commandOptionChoiceString = {
     name: string;
