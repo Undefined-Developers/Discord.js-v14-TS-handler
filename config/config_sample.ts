@@ -1,10 +1,12 @@
 const   
+    totalShards = "auto", // Total shards for your bot
+    shardsPerCluster = 10, // How much shards you wanna spawn per cluster
+    
     bridge_authToken = "auth", // Password for discord-cross-hosting bridge
-    bridge_totalShards = "auto", // Total shards for your bot
     bridge_totalMachines = 1, // How much machines you'll use (check discord-cross-hosting docs) 
-    bridge_shardsPerCluster = 10, // How much shards you wanna spawn per cluster
     bridge_host = "localhost", // ip of hosted bridge (localhost if it's hosted on this machine)
     bridge_port = 4444, // port of bridge
+    bridge_use = false, // use bridge, or not? (Use only sharding if not. Not recommended cause it's nearly not tested)
 
     token = "", // Bot token
 
@@ -86,37 +88,36 @@ const
 
 // HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER -- HANDLER
 
-export function getConfig() {
-    return {
-        "bridge_host": bridge_host,
-        "bridge_port": bridge_port,
-        "bridge_shardsPerCluster": bridge_shardsPerCluster,
-        "bridge_totalMachines": bridge_totalMachines,
-        "bridge_totalShards": bridge_totalShards,
-        "bridge_authToken": bridge_authToken,
-        "token": token,
-        "logLevel": logLevel,
-        "database": database,
-        "botName": botName,
-        "redis": redis,
-        "id": id,
-        "adminCommands": adminCommands,
-        "adminGuilds": adminGuilds,
-        "defaultLanguage": defaultLanguage,
-        "embed": {
-            "color": embed.color,
-            "wrongcolor": embed.wrongcolor,
-            "warncolor": embed.warncolor,
-            "footertext": embed.footertext,
-            "footericon": embed.footericon
-        },
-        "status": {
-            "activities": status.activities,
-            "status": status.status
-        },
-        "ownerIDs": ownerIDs
-    } as Config
-}
+export const config = {
+    "bridge_host": bridge_host,
+    "bridge_port": bridge_port,
+    "shardsPerCluster": shardsPerCluster,
+    "bridge_totalMachines": bridge_totalMachines,
+    "totalShards": totalShards,
+    "bridge_authToken": bridge_authToken,
+    "bridge_use": bridge_use,
+    "token": token,
+    "logLevel": logLevel,
+    "database": database,
+    "botName": botName,
+    "redis": redis,
+    "id": id,
+    "adminCommands": adminCommands,
+    "adminGuilds": adminGuilds,
+    "defaultLanguage": defaultLanguage,
+    "embed": {
+        "color": embed.color,
+        "wrongcolor": embed.wrongcolor,
+        "warncolor": embed.warncolor,
+        "footertext": embed.footertext,
+        "footericon": embed.footericon
+    },
+    "status": {
+        "activities": status.activities,
+        "status": status.status
+    },
+    "ownerIDs": ownerIDs
+} as Config
 
 export const cooldowns = {
     cooldownCategoriesHigh,
@@ -143,11 +144,12 @@ interface Cooldowns {
 
 export interface Config {
     "bridge_authToken": string,
-    "bridge_totalShards": number | "auto",
+    "totalShards": number | "auto",
     "bridge_totalMachines": number,
-    "bridge_shardsPerCluster": number,
+    "shardsPerCluster": number,
     "bridge_host": string,
     "bridge_port": number,
+    "bridge_use": boolean,
     "token": string,
     "logLevel": LogOptions,
     "database": string,

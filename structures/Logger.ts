@@ -3,7 +3,7 @@ import { getInfo } from 'discord-hybrid-sharding';
 import { EmbedBuilder, WebhookClient } from 'discord.js';
 import moment from 'moment';
 
-import { getConfig } from '../config/config';
+import { config } from '../config/config';
 
 const strings = {
   Info:    "  Info ",
@@ -23,7 +23,7 @@ const default_options = {
   warn: true,
   log: true,
   webhook: {
-    link: getConfig().logLevel.webhook,
+    link: config.logLevel.webhook,
     debug: true,
     info: true,
     error: true,

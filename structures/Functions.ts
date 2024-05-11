@@ -3,7 +3,7 @@ import {
     GuildChannel, LocaleString, parseEmoji, PartialEmoji, PermissionsBitField
 } from 'discord.js';
 
-import { Config, Embed, getConfig } from '../config/config';
+import { Config, config, Embed } from '../config/config';
 import { BotCounters, emojiMatches } from '../utils/otherTypes';
 import { BotClient } from './BotClient';
 
@@ -14,7 +14,7 @@ export class ErryFunctions {
   constructor(client: BotClient) {
     this.client = client;
     this.status = 0
-    this.config = getConfig()
+    this.config = config
   }
   async clearCache() {
       try {

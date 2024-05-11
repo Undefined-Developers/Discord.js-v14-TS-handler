@@ -1,8 +1,8 @@
 import { LocaleString } from 'discord.js';
 import { readdir } from 'fs/promises';
 
-import { Config, getConfig } from '../config/config.js';
-import { Emojis, getEmojis } from '../config/emoji.js';
+import { Config, config } from '../config/config.js';
+import { Emojis, emojis } from '../config/emoji.js';
 import { commandLocalizations } from '../utils/otherTypes.js';
 import { globalFilePath } from './BotClient.js';
 import { Logger } from './Logger.js';
@@ -12,8 +12,8 @@ export class ErryLanguage {
   emoji: Emojis
   logger: Logger
   constructor() {
-      this.config = getConfig()
-      this.emoji = getEmojis()
+      this.config = config
+      this.emoji = emojis
       this.logger = new Logger({prefix: "Erry Language", ...this.config.logLevel})
   }
   translate(key: string, language: LocaleString, additional?: {[key: string]: string}, replace?: boolean): string {
@@ -88,42 +88,42 @@ export const languages: NestedLanguageType = {}
 
 export function getSlashCommandName(path: string): string {
   const keys = path.split('.');
-  let current: NestedLanguageType | string = (languages[getConfig().defaultLanguage] as NestedLanguageType)?.commands;
+  let current: NestedLanguageType | string = (languages[config.defaultLanguage] as NestedLanguageType)?.commands;
 
   if (typeof current === 'undefined') {
-    throw `You provided wrong default language in config ${getConfig().defaultLanguage}`
+    throw `You provided wrong default language in config ${config.defaultLanguage}`
   }
 
   for (const key of keys) {
     if (typeof current === 'string' || !(key in current)) {
-      throw `You provided wrong command localizations path (${path}), or this path is not found in default language in config (${getConfig().defaultLanguage})`
+      throw `You provided wrong command localizations path (${path}), or this path is not found in default language in config (${config.defaultLanguage})`
     }
     current = current[key];
   }
 
   if (!(current as NestedLanguageType).slashLocalizations || !((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.name)
-    throw `No name found in path (${path}), or this path is not found in default language in config ${getConfig().defaultLanguage}`
+    throw `No name found in path (${path}), or this path is not found in default language in config ${config.defaultLanguage}`
 
   return ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.name ?? "undefined";
 }
 
 export function getSlashCommandDescription(path: string): string {
   const keys = path.split('.');
-  let current: NestedLanguageType | string = (languages[getConfig().defaultLanguage] as NestedLanguageType)?.commands;
+  let current: NestedLanguageType | string = (languages[config.defaultLanguage] as NestedLanguageType)?.commands;
 
   if (typeof current === 'undefined') {
-    throw `You provided wrong default language in config ${getConfig().defaultLanguage}`
+    throw `You provided wrong default language in config ${config.defaultLanguage}`
   }
 
   for (const key of keys) {
     if (typeof current === 'string' || !(key in current)) {
-      throw `You provided wrong command localizations path (${path}), or this path is not found in default language in config (${getConfig().defaultLanguage})`
+      throw `You provided wrong command localizations path (${path}), or this path is not found in default language in config (${config.defaultLanguage})`
     }
     current = current[key];
   }
 
   if (!(current as NestedLanguageType).slashLocalizations || !((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.name)
-    throw `No name found in path (${path}), or this path is not found in default language in config ${getConfig().defaultLanguage}`
+    throw `No name found in path (${path}), or this path is not found in default language in config ${config.defaultLanguage}`
 
   return ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.description ?? "Description not provided";
 }

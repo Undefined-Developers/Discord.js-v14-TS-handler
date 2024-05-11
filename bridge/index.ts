@@ -1,14 +1,14 @@
 import { Bridge } from 'discord-cross-hosting';
 
-import { getConfig } from '../config/config';
+import { config } from '../config/config';
 
 const server = new Bridge({
-    port: getConfig().bridge_port, // The Port of the Server | Proxy Connection (Replit) needs Port 443
-    authToken: getConfig().bridge_authToken,
-    totalShards: getConfig().bridge_totalShards, // The Total Shards of the Bot or 'auto'
-    totalMachines: getConfig().bridge_totalMachines, // The Total Machines, where the Clusters will run
-    shardsPerCluster: getConfig().bridge_shardsPerCluster, // The amount of Internal Shards, which are in one Cluster
-    token: getConfig().token,
+    port: config.bridge_port, // The Port of the Server | Proxy Connection (Replit) needs Port 443
+    authToken: config.bridge_authToken,
+    totalShards: config.totalShards, // The Total Shards of the Bot or 'auto'
+    totalMachines: config.bridge_totalMachines, // The Total Machines, where the Clusters will run
+    shardsPerCluster: config.shardsPerCluster, // The amount of Internal Shards, which are in one Cluster
+    token: config.token,
 });
 
 server.on('debug', console.log);

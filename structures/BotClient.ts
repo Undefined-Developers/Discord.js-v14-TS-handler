@@ -14,8 +14,8 @@ import { pathToFileURL } from 'url';
 
 import { PrismaClient } from '@prisma/client';
 
-import { Config, getConfig } from '../config/config';
-import { Emojis, getEmojis } from '../config/emoji';
+import { Config, config } from '../config/config';
+import { Emojis, emojis } from '../config/emoji';
 import { dirSetup } from '../config/SlashCommandDirSetup';
 import {
     BotCounters, Command, commandOptionChoiceNumber, commandOptionChoiceString, ContextCommand,
@@ -36,7 +36,7 @@ export class BotClient extends Client {
     db: PrismaClient
     allCommands: (RESTPostAPIContextMenuApplicationCommandsJSONBody | RESTPostAPIChatInputApplicationCommandsJSONBody)[]
     fetchedApplication: ApplicationCommand<{guild: GuildResolvable;}>[]
-    machine: Shard
+    machine?: Shard
     lang: ErryLanguage
     emoji: Emojis
     constructor(options?: ClientOptions) {
@@ -44,9 +44,9 @@ export class BotClient extends Client {
             ...getDefaultClientOptions(),
             ...options
         });
-        this.config = getConfig()
+        this.config = config
         this.cluster = new ClusterClient(this);
-        this.machine = new Shard(this.cluster);
+        this.config.bridge_use ? this.machine = new Shard(this.cluster) : null;
         this.logger = new Logger({ prefix: "     Erry    ", ...this.config.logLevel });
         this.commands = new Collection();
         this.eventPaths = new Collection();
@@ -56,7 +56,7 @@ export class BotClient extends Client {
         this.db = new PrismaClient()
         this.cache = createClient({url: this.config.redis})
         this.lang = new ErryLanguage()
-        this.emoji = getEmojis()
+        this.emoji = emojis
         this.init();
     }
     async init() {

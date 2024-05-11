@@ -17,6 +17,7 @@ export default {
         }
     ],
     async execute(client, interaction, es, ls, GuildSettings) {
+        //@ts-ignore
         const option = interaction.options.getString("test")
         interaction.reply({embeds:[
             new ErrySuccessEmbed(es)
