@@ -18,3 +18,6 @@ This will be used as handler for bot Erry in discord
   4. run `npm run init` and wait
   5. While you'll see `SETUP IS DONE` in console - you're good to start bot. Use `npm run start` for starting bot, `npm run bridge_start` to start bridge. Other commands see in `package.json`
   6. OMG IT'S ONLINE!!
+
+# Credits
+  [Tomato6966/discord-js-v14-handler](https://github.com/Tomato6966/discord-js-v14-handler) - Inspired by code structure. Also few functions was copied and modified from here
