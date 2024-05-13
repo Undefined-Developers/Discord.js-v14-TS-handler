@@ -1,7 +1,7 @@
 import { Interaction, InteractionType, LocaleString } from 'discord.js';
 
 import { Embed } from '../config/config';
-import { slashCommandHandler } from '../handlers/CommandHandler';
+import { commandHandler } from '../handlers/CommandHandler';
 import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient, interaction: Interaction) => {
@@ -32,6 +32,6 @@ export default async (client: BotClient, interaction: Interaction) => {
     }
         
     if(interaction.type === InteractionType.ApplicationCommand) {
-        slashCommandHandler(client, interaction, es, ls, GuildSettings);
+        commandHandler(client, interaction, es, ls, GuildSettings);
     }
 }

@@ -22,7 +22,7 @@ export function onlySecondDuration(duration: number): string {
     return `${time} Sec${time !== 1 ? "s" : ""}`
 }
 
-export async function slashCommandHandler(client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<void> {
+export async function commandHandler(client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<void> {
 
     const slashCmd = client.commands.get(parseSlashCommandKey(interaction));
 
