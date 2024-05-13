@@ -1,10 +1,10 @@
 import { LocaleString } from 'discord.js';
+import { promises } from 'fs';
 import { readdir } from 'fs/promises';
 
 import { Config, config } from '../config/config.js';
 import { Emojis, emojis } from '../config/emoji.js';
 import { commandLocalizations } from '../utils/otherTypes.js';
-import { globalFilePath } from './BotClient.js';
 import { Logger } from './Logger.js';
 
 export class ErryLanguage {
@@ -69,7 +69,7 @@ export class ErryLanguage {
     const dirs = await readdir(`${process.cwd()}${path}`)
     for(const dir of dirs) {
       const curPath = `${process.cwd()}${path}/${dir}`;
-      const language = await import(globalFilePath(curPath)).then(i => i.default);
+      const language = JSON.parse((await promises.readFile(curPath)).toString());
       languages[dir.split(".json")[0]] = language
       this.logger.debug(`✅ Language Loaded: ${dir.split(".json")[0]}`)
     }

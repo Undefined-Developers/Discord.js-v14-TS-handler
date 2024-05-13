@@ -1,13 +1,7 @@
 import { ErrySuccessEmbed } from '../../structures/Functions';
-import {
-    getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName
-} from '../../structures/Language';
 import { Command, optionTypes } from '../../utils/otherTypes';
 
 export default {
-    name: getSlashCommandName("test"),
-    description: getSlashCommandDescription("test"),
-    localizations: getSlashCommandLocalizations("test"),
     options: [
         {
             type: optionTypes.string,

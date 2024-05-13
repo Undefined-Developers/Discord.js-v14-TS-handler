@@ -22,7 +22,9 @@ import {
     optionTypes
 } from '../utils/otherTypes';
 import { ErryFunctions } from './Functions';
-import { ErryLanguage } from './Language';
+import {
+    ErryLanguage, getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName
+} from './Language';
 import { Logger } from './Logger';
 
 export class BotClient extends Client {
@@ -143,7 +145,6 @@ export class BotClient extends Client {
           for (let i = 0; i < dirs.length; i++) {
             const dir = dirs[i];
             const stat = dirStats[i];
-            
             if (!dir.endsWith(".ts") && stat?.isDirectory?.()) {
               const thisDirSetup = dirSetup.find(x => x.Folder.toLowerCase() === dir.toLowerCase());
               if (!thisDirSetup) {
@@ -203,14 +204,32 @@ export class BotClient extends Client {
                         }
                       }
                       for (let sFile of slashCommands) {
-                        const groupCurPath = `${groupPath}/${sFile}`;
                         const command = commands[sFile] as Command;
                         if (!command.name) {
-                          this.logger.stringError(`${groupCurPath} not containing a Command-Name`);
-                          continue;
+                          try {
+                            command.name = getSlashCommandName(sFile.split(".ts").join(""))
+                          } catch (e) {
+                            this.logger.stringError(`${e}`);
+                            continue;
+                          }
+                        }
+                        if (!command.description) {
+                          try {
+                            command.description = getSlashCommandDescription(sFile.split(".ts").join(""))
+                          } catch (e) {
+                            command.description = "Temp_Desc"
+                            this.logger.warn(`There is no description for ${sFile.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
+                          }
+                        }
+                        if (!command.localizations) {
+                          try {
+                            command.localizations = getSlashCommandLocalizations(sFile.split(".ts").join(""))
+                          } catch (e) {
+                            // nothing cause who need localizations if there is 1 language?
+                          }
                         }
                         Group.addSubcommand(Slash => {
-                          Slash.setName(command.name).setDescription(command.description || "Empty Description");
+                          Slash.setName(command.name as string).setDescription(command.description as string);
                           if(command.localizations?.length) {
                             for(const localization of command.localizations) {
                               if(!localization.language) continue;
@@ -233,11 +252,30 @@ export class BotClient extends Client {
                 } else {
                   const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
                   if (!command.name) {
-                    this.logger.stringError(`${curPath} not containing a Command-Name`);
-                    continue;
+                    try {
+                      command.name = getSlashCommandName(file.split(".ts").join(""))
+                    } catch (e) {
+                      this.logger.stringError(`${e}`);
+                      continue;
+                    }
+                  }
+                  if (!command.description) {
+                    try {
+                      command.description = getSlashCommandDescription(file.split(".ts").join(""))
+                    } catch (e) {
+                      command.description = "Temp_Desc"
+                      this.logger.warn(`There is no description for ${file.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
+                    }
+                  }
+                  if (!command.localizations) {
+                    try {
+                      command.localizations = getSlashCommandLocalizations(file.split(".ts").join(""))
+                    } catch (e) {
+                      // nothing cause who need localizations if there is 1 language?
+                    }
                   }
                   subSlash.addSubcommand(Slash => {
-                    Slash.setName(command.name).setDescription(command.description || "Temp_Desc")
+                    Slash.setName(command.name as string).setDescription(command.description as string)
                     if(command.localizations?.length) {
                       for(const localization of command.localizations) {
                         if(!localization.language) continue;
@@ -261,10 +299,29 @@ export class BotClient extends Client {
               const curPath = `${basePath}/${dir}`;
               const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
               if (!command.name) {
-                this.logger.stringError(`${curPath} not containing a Command-Name`);
-                continue;
+                try {
+                  command.name = getSlashCommandName(dir.split(".ts").join(""))
+                } catch (e) {
+                  this.logger.stringError(`${e}`);
+                  continue;
+                }
               }
-              const Slash = new SlashCommandBuilder().setName(command.name).setDescription(command.description || "Temp_Desc").setDMPermission(false);
+              if (!command.description) {
+                try {
+                  command.description = getSlashCommandDescription(dir.split(".ts").join(""))
+                } catch (e) {
+                  command.description = "Temp_Desc"
+                  this.logger.warn(`There is no description for ${dir.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
+                }
+              }
+              if (!command.localizations) {
+                try {
+                  command.localizations = getSlashCommandLocalizations(dir.split(".ts").join(""))
+                } catch (e) {
+                  // nothing cause who need localizations if there is 1 language?
+                }
+              }
+              const Slash = new SlashCommandBuilder().setName(command.name as string).setDescription(command.description as string).setDMPermission(false);
               if(command.defaultPermissions) {
                 Slash.setDefaultMemberPermissions(command.defaultPermissions);
               }

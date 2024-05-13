@@ -8,7 +8,7 @@ import { Embed } from '../config/config';
 import { BotClient } from '../structures/BotClient';
 
 export interface Command {
-    name: string,
+    name?: string,
     description?: string,
     defaultPermissions?: bigint,
     dmPermissions?: bigint,

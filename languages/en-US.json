@@ -5,6 +5,13 @@
                 "name": "test",
                 "description": "Test description for command"
             }
+        },
+        "ping": {
+            "slashLocalizations": {
+                "name": "ping",
+                "description": "Test description for ping command"
+            },
+            "reply": "There is `{{ping}}`ms between me and discord"
         }
     },
     "common": {
