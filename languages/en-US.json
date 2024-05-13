@@ -6,7 +6,7 @@
                 "description": "Test description for command"
             }
         },
-        "ping": {
+        "info_bot_ping": {
             "slashLocalizations": {
                 "name": "ping",
                 "description": "Test description for ping command"

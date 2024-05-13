@@ -207,7 +207,7 @@ export class BotClient extends Client {
                         const command = commands[sFile] as Command;
                         if (!command.name) {
                           try {
-                            command.name = getSlashCommandName(sFile.split(".ts").join(""))
+                            command.name = getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
                           } catch (e) {
                             this.logger.stringError(`${e}`);
                             continue;
@@ -215,15 +215,15 @@ export class BotClient extends Client {
                         }
                         if (!command.description) {
                           try {
-                            command.description = getSlashCommandDescription(sFile.split(".ts").join(""))
+                            command.description = getSlashCommandDescription(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
                           } catch (e) {
                             command.description = "Temp_Desc"
-                            this.logger.warn(`There is no description for ${sFile.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
+                            this.logger.warn(`There is no description for ${String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
                           }
                         }
                         if (!command.localizations) {
                           try {
-                            command.localizations = getSlashCommandLocalizations(sFile.split(".ts").join(""))
+                            command.localizations = getSlashCommandLocalizations(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
                           } catch (e) {
                             // nothing cause who need localizations if there is 1 language?
                           }
@@ -253,7 +253,7 @@ export class BotClient extends Client {
                   const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
                   if (!command.name) {
                     try {
-                      command.name = getSlashCommandName(file.split(".ts").join(""))
+                      command.name = getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
                     } catch (e) {
                       this.logger.stringError(`${e}`);
                       continue;
@@ -261,15 +261,15 @@ export class BotClient extends Client {
                   }
                   if (!command.description) {
                     try {
-                      command.description = getSlashCommandDescription(file.split(".ts").join(""))
+                      command.description = getSlashCommandDescription(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
                     } catch (e) {
                       command.description = "Temp_Desc"
-                      this.logger.warn(`There is no description for ${file.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
+                      this.logger.warn(`There is no description for ${String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
                     }
                   }
                   if (!command.localizations) {
                     try {
-                      command.localizations = getSlashCommandLocalizations(file.split(".ts").join(""))
+                      command.localizations = getSlashCommandLocalizations(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
                     } catch (e) {
                       // nothing cause who need localizations if there is 1 language?
                     }
