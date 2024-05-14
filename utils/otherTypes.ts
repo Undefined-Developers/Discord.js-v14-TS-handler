@@ -1,5 +1,6 @@
 import {
-    ChannelType, CommandInteraction, ContextMenuCommandInteraction, LocaleString, LocalizationMap
+    AutocompleteInteraction, ChannelType, CommandInteraction, ContextMenuCommandInteraction,
+    LocaleString, LocalizationMap
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
@@ -22,6 +23,7 @@ export interface CommandExport {
     commandId?: string,
     slashCommandKey?: string,
     execute: (client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+    autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
 }
 export interface Command {
     name: string,
@@ -38,6 +40,7 @@ export interface Command {
     commandId?: string,
     slashCommandKey?: string,
     execute: (client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+    autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
 }
 export interface ContextCommand {
     name: string,

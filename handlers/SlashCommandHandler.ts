@@ -1,5 +1,6 @@
 import {
-    CommandInteraction, EmbedBuilder, LocaleString, PermissionFlagsBits, PermissionsBitField
+    ChatInputCommandInteraction, CommandInteraction, EmbedBuilder, LocaleString,
+    PermissionFlagsBits, PermissionsBitField
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
@@ -9,49 +10,40 @@ import { BotClient } from '../structures/BotClient';
 import { ErryErrorEmbed } from '../structures/Functions';
 import { Command, ContextCommand } from '../utils/otherTypes';
 
-const cooldownCategoriesHigh = cooldowns.cooldownCategoriesHigh
-const cooldownCommandsHigh = cooldowns.cooldownCommandsHigh
-const defaultCooldownMsHigh = cooldowns.defaultCooldownMsHigh
-const cooldownCategories = cooldowns.cooldownCategories
-const cooldownCommands = cooldowns.cooldownCommands
-const defaultCooldownMs = cooldowns.defaultCooldownMs
-const maximumCoolDownCommands = cooldowns.maximumCoolDownCommands
-
 export function onlySecondDuration(duration: number): string {
     const time = Math.floor(duration / 1000 * 100) / 100;
     return `${time} Sec${time !== 1 ? "s" : ""}`
 }
 
-export async function commandHandler(client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<void> {
+export async function slashCommandHandler(client: BotClient, interaction: ChatInputCommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<void> {
 
-    const slashCmd = client.commands.get(parseSlashCommandKey(interaction));
+    const slashCmd = client.commands.get(parseSlashCommandKey(interaction)) as Command;
 
     if(slashCmd) {
         try {
             if(!(await checkCommand(client, slashCmd, interaction, es, ls))) return;
-            var commandName = interaction.isContextMenuCommand() ? 'shortName' in slashCmd && slashCmd.shortName : interaction.isChatInputCommand() ? `${interaction.commandName}${interaction.options.getSubcommandGroup(false) ? `_${interaction.options.getSubcommandGroup(false)}` : ``}${interaction.options.getSubcommand(false) ? `_${interaction.options.getSubcommand(false)}` : ``}` : ""
+            var commandName = `${interaction.commandName}${interaction.options.getSubcommandGroup(false) ? `_${interaction.options.getSubcommandGroup(false)}` : ``}${interaction.options.getSubcommand(false) ? `_${interaction.options.getSubcommand(false)}` : ``}`
             client.logger.debug(`Used /${commandName}\n\t\t(${interaction?.guild?.name ? interaction?.guild?.name : "DMS"} (${interaction?.guild?.id}) by ${interaction.user.globalName || interaction.user.username} (${interaction.user.id}))`)
-            interaction.isContextMenuCommand() && await slashCmd.execute(client, interaction, es = client.config.embed, ls = client.config.defaultLanguage, GuildSettings);
-            interaction.isChatInputCommand() && await (slashCmd as Command).execute(client, interaction, es = client.config.embed, ls = client.config.defaultLanguage, GuildSettings);
+            await slashCmd.execute(client, interaction, es = client.config.embed, ls = client.config.defaultLanguage, GuildSettings);
         } catch (e) {
             client.logger.error(e as Error);client.logger.debug(`Error is for guild ${interaction.guild?.id}`)
             const content = client.lang.translate("common.error", ls, {command: slashCmd?.name || "???", error: String((e as Error)?.message ?? e).substring(0, 500)})
             if(interaction.replied) {
-                interaction.editReply({ content: content as string }).then(async (msg) => {
+                await interaction.editReply({ content: content as string }).then(async (msg) => {
                     setTimeout(() => {
                         msg.delete()
-                    }, 15000)
+                    }, 5000)
                 }).catch(() => null);
             } else {
-                interaction.reply({ content: content as string, ephemeral: true }).then(async (msg) => {
+                await interaction.reply({ content: content as string, ephemeral: true }).then(async (msg) => {
                     setTimeout(() => {
                         msg.delete()
-                    }, 15000)
+                    }, 5000)
                 }).catch(() => {
                     interaction.channel?.send({ content: content as string }).then(async (msg) => {
                         setTimeout(() => {
                             msg.delete()
-                        }, 15000)
+                        }, 5000)
                     }).catch(() => null);
                 })
             }
@@ -59,21 +51,14 @@ export async function commandHandler(client: BotClient, interaction: CommandInte
     }
 }
 
-export function parseSlashCommandKey(interaction: CommandInteraction): string {
-    var keys: string[]
-    if (interaction.isContextMenuCommand()) {
-        keys = ["context", interaction.commandName];
-    }else if (interaction.isChatInputCommand()) {
-        keys = ["slashcmd", interaction.commandName];
-        if(interaction.options.getSubcommand(false)) { keys.push(`${interaction.options.getSubcommand(false)}`); keys[0] = "subcmd"; }
-        if(interaction.options.getSubcommandGroup(false)) { keys.splice(1, 0, `${interaction.options.getSubcommandGroup(false)}`); keys[0] = "groupcmd"; }
-    }else{
-        keys = []
-    }
+export function parseSlashCommandKey(interaction: ChatInputCommandInteraction): string {
+    var keys: string[] = ["slashcmd", interaction.commandName];
+    if(interaction.options.getSubcommand(false)) { keys.push(`${interaction.options.getSubcommand(false)}`); keys[0] = "subcmd"; }
+    if(interaction.options.getSubcommandGroup(false)) { keys.splice(1, 0, `${interaction.options.getSubcommandGroup(false)}`); keys[0] = "groupcmd"; }
     return keys.join("_");
 }
 
-export async function checkCommand(client: BotClient, command: Command|ContextCommand, ctx: CommandInteraction, es: Embed, ls: LocaleString, dontCheckCooldown?: boolean) {
+export async function checkCommand(client: BotClient, command: Command|ContextCommand, ctx: ChatInputCommandInteraction, es: Embed, ls: LocaleString, dontCheckCooldown?: boolean) {
     if(command.mustPermissions?.length) {
         if(ctx.user.id !== ctx.guild?.ownerId && !((ctx.member?.permissions as PermissionsBitField).has(PermissionFlagsBits.Administrator) && command.mustPermissions.some(x => !((ctx.member?.permissions as PermissionsBitField).has(x))))) {
             return await ctx.reply({
@@ -111,10 +96,10 @@ export async function isOnCooldown(client: BotClient, command: Command|ContextCo
     const [ userId, guildId ] = [ ctx.user.id, ctx.guild?.id ?? "" ];
     
     const defaultCooldown =
-        cooldownCategoriesHigh.includes(command.category || "") || cooldownCommandsHigh.includes(command.name)
-        ? defaultCooldownMsHigh : 
-        cooldownCategories.includes(command.category || "") || cooldownCommands.includes(command.name)
-        ? defaultCooldownMs : 0;
+        cooldowns.cooldownCategoriesHigh.includes(command.category || "") || cooldowns.cooldownCommandsHigh.includes(command.name)
+        ? cooldowns.defaultCooldownMsHigh : 
+        cooldowns.cooldownCategories.includes(command.category || "") || cooldowns.cooldownCommands.includes(command.name)
+        ? cooldowns.defaultCooldownMs : 0;
     
     if(command.cooldown?.user) {
         const userCooldowns = new Map(JSON.parse(await client.cache.get(`userCooldown_${userId}`) || "[]")) as Map<string, number>;
@@ -145,13 +130,13 @@ export async function isOnCooldown(client: BotClient, command: Command|ContextCo
         await client.cache.set(`guildCooldown_${guildId}`, JSON.stringify(Array.from(guildCooldowns.entries())));
     }
     const globalCooldowns = JSON.parse(await client.cache.get(`globalCooldown_${userId}`) || "[]");
-    const allCools = [...(globalCooldowns || []), Date.now()].filter( x => (Date.now() - x) <= maximumCoolDownCommands.time);
+    const allCools = [...(globalCooldowns || []), Date.now()].filter( x => (Date.now() - x) <= cooldowns.maximumCoolDownCommands.time);
     await client.cache.set(`globalCooldown_${userId}`, JSON.stringify(allCools))
-    if(allCools.length > maximumCoolDownCommands.amount) {
+    if(allCools.length > cooldowns.maximumCoolDownCommands.amount) {
         return ctx.reply({
             ephemeral: true,
             embeds: [
-                new ErryErrorEmbed(es).addFields({name: client.lang.translate("common.cooldown.global", ls), value: client.lang.translate("common.cooldown.global_", ls, {time: String(maximumCoolDownCommands.time / 1000), amount: String(maximumCoolDownCommands.amount)})})
+                new ErryErrorEmbed(es).addFields({name: client.lang.translate("common.cooldown.global", ls), value: client.lang.translate("common.cooldown.global_", ls, {time: String(cooldowns.maximumCoolDownCommands.time / 1000), amount: String(cooldowns.maximumCoolDownCommands.amount)})})
             ],
         }).catch(() => null), true;
     }

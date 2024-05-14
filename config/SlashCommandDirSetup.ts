@@ -2,8 +2,8 @@ import { dirSetup as dirSetupType } from '../utils/otherTypes';
 
 export const dirSetup = [
     {
-        Folder: "Info", // == FolderName
-        name: "info", // == CommandName 
+        Folder: "Info", // Folder Name
+        name: "info", // Command Name (you'll see in discord)
 
         // defaultPermissions: new PermissionsBitField([PermissionFlagsBits.Administrator]).bitfield,
         // dmPermissions: new PermissionsBitField([PermissionFlagsBits.Administrator]).bitfield,

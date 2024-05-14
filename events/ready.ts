@@ -5,7 +5,7 @@ export default async (client: BotClient) => {
         client.logger.success(`Discord Bot is ready as ${client.user?.globalName || client.user?.username}`);
         client.functions.statusUpdater(); 
         setInterval(() => client.functions.statusUpdater(), 10e3)
-        await client.publishCommands(client.config.adminGuilds || undefined);
+        await client.publishCommands(client.config.devGuilds || undefined);
         client.prepareCommands();
     }catch(e) {client.logger.error(e as Error)}
 }

@@ -421,7 +421,7 @@ export class BotClient extends Client {
             }).catch(e => {this.logger.error(e);});
             return true;
         }
-        await this.application?.commands.set(this.allCommands.filter((c) => !this.config.adminCommands?.includes?.(c.name))).then(() => {
+        await this.application?.commands.set(this.allCommands.filter((c) => !this.config.devCommands?.includes?.(c.name))).then(() => {
             this.logger.debug(`SLASH-CMDS | Set ${this.commands.size} global slashCommands!`)
         }).catch(e => {this.logger.error(e);});
         for (var guildId of guildIds) {
@@ -429,7 +429,7 @@ export class BotClient extends Client {
           if(![...this.cluster.ids.keys()].includes(shardId)) return this.logger.warn("CANT UPDATE SLASH COMMANDS - WRONG CLUSTER");
           const guild = this.guilds.cache.get(guildId);
           if(!guild) return this.logger.stringError(`could not find the guild \`${guildId}\` for updating slash commands`)
-          guild.commands.set(this.allCommands.filter((c) => this.config.adminCommands?.includes?.(c.name))).catch(e => {this.logger.error(e);});
+          guild.commands.set(this.allCommands.filter((c) => this.config.devCommands?.includes?.(c.name))).catch(e => {this.logger.error(e);});
         }
         this.logger.debug(`SLASH-CMDS | Set ${this.commands.size} guild slashCommands!`)
         return true;

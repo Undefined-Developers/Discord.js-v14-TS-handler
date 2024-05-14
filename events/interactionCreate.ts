@@ -1,7 +1,9 @@
-import { Interaction, InteractionType, LocaleString } from 'discord.js';
+import { Interaction, LocaleString } from 'discord.js';
 
 import { Embed } from '../config/config';
-import { commandHandler } from '../handlers/CommandHandler';
+import { autocompleteCommandHandler } from '../handlers/AutocompleteCommandHandler';
+import { contextCommandHandler } from '../handlers/ContextCommandHandler';
+import { slashCommandHandler } from '../handlers/SlashCommandHandler';
 import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient, interaction: Interaction) => {
@@ -31,7 +33,7 @@ export default async (client: BotClient, interaction: Interaction) => {
         es = GuildSettings.embed as Embed || client.config.embed
     }
         
-    if(interaction.type === InteractionType.ApplicationCommand) {
-        commandHandler(client, interaction, es, ls, GuildSettings);
-    }
+    interaction.isChatInputCommand() && slashCommandHandler(client, interaction, es, ls, GuildSettings);
+    interaction.isContextMenuCommand() && contextCommandHandler(client, interaction, es, ls, GuildSettings);
+    interaction.isAutocomplete() && autocompleteCommandHandler(client, interaction, es, ls, GuildSettings);
 }

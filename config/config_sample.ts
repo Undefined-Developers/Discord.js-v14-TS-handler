@@ -6,7 +6,7 @@ const
     bridge_totalMachines = 1, // How much machines you'll use (check discord-cross-hosting docs) 
     bridge_host = "localhost", // ip of hosted bridge (localhost if it's hosted on this machine)
     bridge_port = 4444, // port of bridge
-    bridge_use = false, // use bridge, or not? (Use only sharding if not. Not recommended cause it's nearly not tested)
+    bridge_use = false, // use bridge, or not? (Use only sharding if not. Won't affect anything cause `discord-cross-hosting` is still in dev.)
 
     token = "", // Bot token
 
@@ -38,10 +38,10 @@ const
     
     id = "", // Bot ID
     
-    adminCommands = [ // Array with all commands that should upload ONLY to admin guilds
+    devCommands = [ // Array with all commands that should upload ONLY to dev guilds
         "owner"
     ],
-    adminGuilds = [ // Admin guilds
+    devGuilds = [ // Dev guilds
         "1008300478146293760"
     ],
     ownerIDs = [ // Bot owners (unused in handler source)
@@ -102,8 +102,8 @@ export const config = {
     "botName": botName,
     "redis": redis,
     "id": id,
-    "adminCommands": adminCommands,
-    "adminGuilds": adminGuilds,
+    "devCommands": devCommands,
+    "devGuilds": devGuilds,
     "defaultLanguage": defaultLanguage,
     "embed": {
         "color": embed.color,
@@ -155,8 +155,8 @@ export interface Config {
     "database": string,
     "botName": string,
     "redis": string,
-    "adminCommands": string[],
-    "adminGuilds": string[],
+    "devCommands": string[],
+    "devGuilds": string[],
     "defaultLanguage": LocaleString,
     "embed": Embed
     "status": Status
