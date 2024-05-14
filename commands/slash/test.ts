@@ -1,5 +1,5 @@
 import { ErrySuccessEmbed } from '../../structures/Functions';
-import { Command, optionTypes } from '../../utils/otherTypes';
+import { CommandExport, optionTypes } from '../../utils/otherTypes';
 
 export default {
     options: [
@@ -19,4 +19,4 @@ export default {
                 .setFooter(client.functions.getFooter(es, `Option text: ${client.functions.getFooter(es, undefined, option)}`))
         ], ephemeral: true})
     }
-} as Command
+} as CommandExport

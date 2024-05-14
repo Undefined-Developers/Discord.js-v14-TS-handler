@@ -7,9 +7,25 @@ import { Settings } from '@prisma/client';
 import { Embed } from '../config/config';
 import { BotClient } from '../structures/BotClient';
 
-export interface Command {
+export interface CommandExport {
     name?: string,
     description?: string,
+    defaultPermissions?: bigint,
+    dmPermissions?: bigint,
+    mustPermissions?: bigint[],
+    allowedPermissions?: bigint[],
+    localizations?: commandLocalizations[],
+    options?: commandOption[],
+    category?: string,
+    cooldown?: CommandCooldown,
+    mention?: string,
+    commandId?: string,
+    slashCommandKey?: string,
+    execute: (client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+}
+export interface Command {
+    name: string,
+    description: string,
     defaultPermissions?: bigint,
     dmPermissions?: bigint,
     mustPermissions?: bigint[],

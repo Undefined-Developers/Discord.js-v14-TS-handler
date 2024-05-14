@@ -1,5 +1,5 @@
 import { ErrySuccessEmbed } from '../../../../structures/Functions';
-import { Command } from '../../../../utils/otherTypes';
+import { CommandExport } from '../../../../utils/otherTypes';
 
 export default {
     async execute(client, interaction, es, ls, GuildSettings) {
@@ -10,4 +10,4 @@ export default {
             ]
         })
     }
-} as Command
+} as CommandExport

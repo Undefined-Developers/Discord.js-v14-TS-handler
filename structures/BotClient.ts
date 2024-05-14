@@ -204,7 +204,7 @@ export class BotClient extends Client {
                         }
                       }
                       for (let sFile of slashCommands) {
-                        const command = commands[sFile] as Command;
+                        const command = commands[sFile];
                         if (!command.name) {
                           try {
                             command.name = getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
@@ -229,7 +229,7 @@ export class BotClient extends Client {
                           }
                         }
                         Group.addSubcommand(Slash => {
-                          Slash.setName(command.name as string).setDescription(command.description as string);
+                          Slash.setName(command.name).setDescription(command.description);
                           if(command.localizations?.length) {
                             for(const localization of command.localizations) {
                               if(!localization.language) continue;
@@ -250,7 +250,7 @@ export class BotClient extends Client {
                     });
                   }
                 } else {
-                  const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
+                  const command = await import(globalFilePath(curPath)).then(x => x.default);
                   if (!command.name) {
                     try {
                       command.name = getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
@@ -297,7 +297,7 @@ export class BotClient extends Client {
               this.allCommands.push(subSlash.toJSON());
             } else {
               const curPath = `${basePath}/${dir}`;
-              const command = await import(globalFilePath(curPath)).then(x => x.default) as Command;
+              const command = await import(globalFilePath(curPath)).then(x => x.default);
               if (!command.name) {
                 try {
                   command.name = getSlashCommandName(dir.split(".ts").join(""))
@@ -537,75 +537,6 @@ export function getDefaultClientOptions() {
             ],
             status: PresenceUpdateStatus.DoNotDisturb as PresenceStatusData
         },
-        /*sweepers: {   //TODO: Idk how to setup this, so yes
-            ...Options.DefaultSweeperSettings,
-            bans: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            messages: {
-                interval: Second.Minute(5),
-                lifetime: Second.Hour(1),
-            },
-            threads: { 
-                interval: Second.Minute(5), 
-                lifetime: Second.Hour(1) 
-            },
-            threadMembers: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            invites: { 
-                interval: Second.Minute(5), 
-                lifetime: Second.Hour(1) 
-            },
-            presences: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            reactions: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            stickers: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            autoModerationRules: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            users: { 
-                interval: Second.Minute(5), 
-                filter: () => user => {
-                    return false;
-                }
-            },
-            applicationCommands: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-            emojis: { 
-                interval: Second.Minute(5), 
-                filter: () => {
-                    return false;
-                } 
-            },
-        },*/
         failIfNotExists: false,
         allowedMentions: {
             parse: [],
