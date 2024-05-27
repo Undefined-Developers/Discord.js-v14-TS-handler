@@ -11,7 +11,7 @@
                 "name": "ping",
                 "description": "Test description for ping command"
             },
-            "reply": "There is `{{ping}}`ms between me and discord"
+            "reply": "There is `{{ping}}`ms between me and discord\nThere is `{{dbping}}`ms between me and my database"
         }
     },
     "common": {

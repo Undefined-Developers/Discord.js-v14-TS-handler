@@ -15,7 +15,7 @@ const strings = {
 }
 
 const default_options = {
-  prefix: "Erry",
+  prefix: "     Erry    ",
   debug: true,
   info: true,
   error: true,
@@ -79,23 +79,23 @@ interface inputOption {
 }
 
 export class Logger {
-  space: string
-  options: loggerOptions
-  webhook: WebhookClient | undefined
+  private space: string
+  public options: loggerOptions
+  public webhook: WebhookClient | undefined
   constructor(options?: inputOption) {
     this.space = chalk.magenta.bold(" [::] ")
     this.options = { ...default_options, ...options } as unknown as loggerOptions
     if (this.options.webhook.link) this.webhook = new WebhookClient({ url: this.options.webhook.link });
     else for (const key of Object.keys(this.options.webhook) as (keyof webhookOptions)[]) {if (key == "link") continue; this.options.webhook[key] = false}
   }
-  GetDay() {
+  private GetDay() {
     return moment().format("DD/MM/YY")
   }
-  GetTime() {
+  private GetTime() {
     return moment().format("HH:mm:ss.SS")
   }
 
-  info(...input: string[]): void {
+  public info(...input: string[]): void {
     if (!this.options.info) return;
     console.log(
       [
@@ -121,7 +121,7 @@ export class Logger {
     return;
   }
 
-  warn(...input: string[]): void {
+  public warn(...input: string[]): void {
     if (!this.options.warn) return;
     console.log(
       [
@@ -147,7 +147,7 @@ export class Logger {
     return;
   }
 
-  error(error: Error): void {
+  public error(error: Error): void {
     if (!this.options.error) return;
     console.log(
       [
@@ -182,7 +182,7 @@ export class Logger {
     return;
   }
 
-  stringError(...error: string[]): void {
+  public stringError(...error: string[]): void {
     if (!this.options.error) return;
     console.log(
       [
@@ -208,7 +208,7 @@ export class Logger {
     return;
   }
 
-  success(...input: string[]): void {
+  public success(...input: string[]): void {
     if (!this.options.success) return;
     console.log(
       [
@@ -234,7 +234,7 @@ export class Logger {
     return;
   }
 
-  debug(...input: string[]): void {
+  public debug(...input: string[]): void {
     if (!this.options.debug) return;
     console.log(
       [
@@ -260,7 +260,7 @@ export class Logger {
     return;
   }
 
-  log(...input: string[]): void {
+  public log(...input: string[]): void {
     if (!this.options.log) return;
     console.log(
       [

@@ -12,8 +12,6 @@ import { resolve } from 'path';
 import { createClient, RedisClientType } from 'redis';
 import { pathToFileURL } from 'url';
 
-import { PrismaClient } from '@prisma/client';
-
 import { Config, config } from '../config/config';
 import { Emojis, emojis } from '../config/emoji';
 import { dirSetup } from '../config/SlashCommandDirSetup';
@@ -21,6 +19,7 @@ import {
     BotCounters, Command, commandOptionChoiceNumber, commandOptionChoiceString, ContextCommand,
     optionTypes
 } from '../utils/otherTypes';
+import { ErryDatabase } from './Database';
 import { ErryFunctions } from './Functions';
 import {
     ErryLanguage, getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName
@@ -28,19 +27,19 @@ import {
 import { Logger } from './Logger';
 
 export class BotClient extends Client {
-    config: Config
-    logger: Logger
-    cluster: ClusterClient<DjsDiscordClient>
-    commands: Collection<string, Command|ContextCommand>
-    eventPaths: Collection<string, {eventName: string, path: string}>
-    cache: RedisClientType
-    functions: ErryFunctions
-    db: PrismaClient
-    allCommands: (RESTPostAPIContextMenuApplicationCommandsJSONBody | RESTPostAPIChatInputApplicationCommandsJSONBody)[]
-    fetchedApplication: ApplicationCommand<{guild: GuildResolvable;}>[]
-    machine?: Shard
-    lang: ErryLanguage
-    emoji: Emojis
+    public config: Config
+    public logger: Logger
+    public cluster: ClusterClient<DjsDiscordClient>
+    public commands: Collection<string, Command|ContextCommand>
+    public eventPaths: Collection<string, {eventName: string, path: string}>
+    public cache: RedisClientType
+    public functions: ErryFunctions
+    public db: ErryDatabase
+    public allCommands: (RESTPostAPIContextMenuApplicationCommandsJSONBody | RESTPostAPIChatInputApplicationCommandsJSONBody)[]
+    public fetchedApplication: ApplicationCommand<{guild: GuildResolvable;}>[]
+    public machine?: Shard
+    public lang: ErryLanguage
+    public emoji: Emojis
     constructor(options?: ClientOptions) {
         super({
             ...getDefaultClientOptions(),
@@ -55,13 +54,13 @@ export class BotClient extends Client {
         this.allCommands = [];
         this.fetchedApplication = [],
         this.functions = new ErryFunctions(this);
-        this.db = new PrismaClient()
+        this.db = new ErryDatabase()
         this.cache = createClient({url: this.config.redis})
         this.lang = new ErryLanguage()
         this.emoji = emojis
         this.init();
     }
-    async init() {
+    public async init() {
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Languages`);
         await this.lang.init();
@@ -88,7 +87,7 @@ export class BotClient extends Client {
 
         return this.emit("ErryLoaded", this);
     }
-    get counters() {
+    public get counters() {
       return {
         guilds: this.guilds.cache.size,
         members: this.guilds.cache.map(x => x.memberCount).reduce((a,b) => a+b,0),
@@ -98,7 +97,7 @@ export class BotClient extends Client {
         uptime: this.uptime,
       } as BotCounters
     }
-    async loadExtenders() {
+    public async loadExtenders() {
       try {
         const paths = await walks(`${process.cwd()}/extenders`);
         await Promise.all(
@@ -114,7 +113,7 @@ export class BotClient extends Client {
       }
       return true;
     }
-    async loadEvents() {
+    public async loadEvents() {
       try {
         this.eventPaths.clear();
         const paths = await walks(`${process.cwd()}/events`);
@@ -134,7 +133,7 @@ export class BotClient extends Client {
       }
       return true;
     }
-    async loadCommands(path = "/commands/slash") {
+    public async loadCommands(path = "/commands/slash") {
         try {
           this.allCommands = [];
           this.commands.clear();
@@ -350,7 +349,7 @@ export class BotClient extends Client {
         
         return true;
     }      
-    async loadContextMenu(path = "/commands/context") {
+    public async loadContextMenu(path = "/commands/context") {
         try {
           const basePath = `${process.cwd()}${path}`;
           const dirs = await promises.readdir(basePath);
@@ -388,7 +387,7 @@ export class BotClient extends Client {
         
         return true;
     }      
-    async prepareCommands() {
+    public async prepareCommands() {
         const allSlashs = await this.application?.commands.fetch(undefined)
             .then(x => [...x.values()])
             .catch(console.warn) 
@@ -407,7 +406,7 @@ export class BotClient extends Client {
         }
         return true;
     }
-    async publishCommands(guildIds?: string[], del?: boolean) {
+    public async publishCommands(guildIds?: string[], del?: boolean) {
         if (del) {
           for (var guild of this.guilds.cache.values()) {
             guild.commands.set([]).catch(e => {this.logger.error(e);this.logger.debug(`recent error were for guild ${guild.name} || ${guild.id}`);});
@@ -434,7 +433,7 @@ export class BotClient extends Client {
         this.logger.debug(`SLASH-CMDS | Set ${this.commands.size} guild slashCommands!`)
         return true;
     }
-    buildOption(op: any, option: any) {
+    private buildOption(op: any, option: any) {
         op.setName(option.name.toLowerCase())
             .setDescription(option.description || "TEMP_DESC")
             .setRequired(!!option.required);
@@ -448,7 +447,7 @@ export class BotClient extends Client {
         }
         return op;
     }
-    buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder) {
+    private buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder) {
         if (command.options?.length) {
             for (const option of command.options) {
                 const type = option.type.toLowerCase();

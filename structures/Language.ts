@@ -8,15 +8,15 @@ import { commandLocalizations } from '../utils/otherTypes.js';
 import { Logger } from './Logger.js';
 
 export class ErryLanguage {
-  config: Config
-  emoji: Emojis
-  logger: Logger
+  public config: Config
+  public emoji: Emojis
+  public logger: Logger
   constructor() {
       this.config = config
       this.emoji = emojis
       this.logger = new Logger({prefix: "Erry Language", ...this.config.logLevel})
   }
-  translate(key: string, language: LocaleString, additional?: {[key: string]: string}, replace?: boolean): string {
+  public translate(key: string, language: LocaleString, additional?: {[key: string]: string}, replace?: boolean): string {
     try{
       var str
       try {
@@ -62,10 +62,10 @@ export class ErryLanguage {
       return ""
     }
   };
-  get get() {
+  public get get() {
     return languages
   }
-  async init(path = "/languages/") {
+  public async init(path = "/languages/") {
     const dirs = await readdir(`${process.cwd()}${path}`)
     for(const dir of dirs) {
       const curPath = `${process.cwd()}${path}/${dir}`;
@@ -74,7 +74,7 @@ export class ErryLanguage {
       this.logger.debug(`✅ Language Loaded: ${dir.split(".json")[0]}`)
     }
   }
-  translatePermissions(permissionsArray: string[], ls: LocaleString) {
+  public translatePermissions(permissionsArray: string[], ls: LocaleString) {
     if (!permissionsArray || permissionsArray.length <= 0) return this.translate("common.error", ls);
     var result = permissionsArray.map((permission, index) => {
       return this.translate(`common.permissions.${permission}`, ls)

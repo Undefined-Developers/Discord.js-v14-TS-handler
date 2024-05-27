@@ -8,15 +8,15 @@ import { BotCounters, emojiMatches } from '../utils/otherTypes';
 import { BotClient } from './BotClient';
 
 export class ErryFunctions {
-  client: BotClient
-  status: number
-  config: Config
+  public client: BotClient
+  private status: number
+  public config: Config
   constructor(client: BotClient) {
     this.client = client;
     this.status = 0
     this.config = config
   }
-  async clearCache() {
+  public async clearCache() {
       try {
         var keys = await this.client.cache.keys("*")
         for (var key of keys) {
@@ -28,7 +28,7 @@ export class ErryFunctions {
         return false;
       }
   }
-  formatMS(millis: number, ls: LocaleString): string {
+  public formatMS(millis: number, ls: LocaleString): string {
     let localization = {
       m: this.client.lang.translate("common.metrics.minutesShort", ls),
       s: this.client.lang.translate("common.metrics.secondsShort", ls),
@@ -48,7 +48,7 @@ export class ErryFunctions {
     if (h == "00" || h == "0") return val ? "-" + m + `${localization.m} ` + s + `${localization.s} | ` + "-" + Math.floor((millis / 1000)) + ` ${localization.seconds}` : m + `${localization.m} ` + s + `${localization.s} | ` + Math.floor((millis / 1000)) + " Seconds";
     else return val ? "-" + h + `${localization.h} ` + m + `${localization.m} ` + s + `${localization.s} | ` + "-" + Math.floor((millis / 1000)) + ` ${localization.seconds}` : h + `${localization.h} ` + m + `${localization.m} ` + s + `${localization.s} | ` + Math.floor((millis / 1000)) + " Seconds";
   }
-  parseEmojis(stringInput: string, filterDupes: boolean): { str: string; parsed: PartialEmoji | null; }[] {
+  public parseEmojis(stringInput: string, filterDupes: boolean): { str: string; parsed: PartialEmoji | null; }[] {
     const matches = [...stringInput.matchAll(emojiMatches)];
     if(!matches.length) return [];
     const matchedEmojis = matches.map(x => {
@@ -58,7 +58,7 @@ export class ErryFunctions {
     });
     return filterDupes ? matchedEmojis.reduce((a: { str: string; parsed: PartialEmoji | null; }[], c: { str: string; parsed: PartialEmoji | null; }) => !a.find(item => item.str === c.str) ? a.concat([c]) : a, []) : matchedEmojis;
   }
-  async statusUpdater(): Promise<void> {
+  public async statusUpdater(): Promise<void> {
     const shardIds = [...this.client.cluster.ids.keys()];
     const { guilds, members } = await this.client.cluster.broadcastEval("this.counters", {timeout: 15000}).then((x: BotCounters[]) => {
       return {
@@ -89,13 +89,13 @@ export class ErryFunctions {
       });
     }
   }
-  uniqueArray(arr: any[]): any[] {
+  public uniqueArray(arr: any[]): any[] {
     var date = Date.now()
     const result = arr.filter((element, index) => arr.indexOf(element) === index);
     this.client.logger.debug(`Checked for duplicates in ${Date.now()-date}ms`)
     return result;
   }
-  checkPermsForGuild(guild: Guild): {status: boolean, missing?: string[]} {
+  public checkPermsForGuild(guild: Guild): {status: boolean, missing?: string[]} {
     var me = guild.members.me
     if (!me) return {status: true};
     var missing = []
@@ -110,7 +110,7 @@ export class ErryFunctions {
     if (missing?.length >= 1) return {status: false, missing: new PermissionsBitField(missing).toArray()};
     return {status: true};
   }
-  checkPermsForChannel(channel: GuildChannel): {status: boolean, missing?: string[]} {
+  public checkPermsForChannel(channel: GuildChannel): {status: boolean, missing?: string[]} {
     const user = channel.guild.members.me
     if (user) var me = channel.permissionsFor(user)
     else return {status: true};
@@ -136,7 +136,7 @@ export class ErryFunctions {
     if (missing?.length >= 1) return {status: false, missing: new PermissionsBitField(missing).toArray()};
     return {status: true};
   }
-  getFooter(es: Embed, stringurl?: string, customText?: string): EmbedFooterOptions { 
+  public getFooter(es: Embed, stringurl?: string, customText?: string): EmbedFooterOptions { 
     let text = es.footertext;
     let iconURL: string|undefined = stringurl ? stringurl : es.footericon;
     if (customText) text = customText
@@ -148,7 +148,7 @@ export class ErryFunctions {
     if(![".png", ".jpg", ".wpeg", ".webm", ".gif", ".webp"].some(d => iconURL?.toLowerCase().endsWith(d))) iconURL = this.client.user?.displayAvatarURL();
     return { text, iconURL }
   };
-  getAuthor(authorname: string, authoricon?: string, authorurl?: string): EmbedAuthorOptions {
+  public getAuthor(authorname: string, authoricon?: string, authorurl?: string): EmbedAuthorOptions {
     let name = authorname;
     let iconURL = authoricon;
     let url = authorurl;
@@ -161,41 +161,6 @@ export class ErryFunctions {
     if(![".png", ".jpg", ".wpeg", ".webm", ".gif"].some(d => iconURL?.toLowerCase().endsWith(d))) iconURL = this.client.user?.displayAvatarURL();
     return { name: name, iconURL: iconURL, url: url }
   };
-  async createNewGuildDatabase(guild_id: string): Promise<boolean> {
-    this.client.logger.debug(`Called databasing for guild ${guild_id}`)
-    const settingsDb = await this.client.db.settings.findUnique({
-      where: {
-        guildId: guild_id
-      }
-    })
-    const es = await this.client.db.embed.findUnique({
-      where: {
-        guildId: guild_id
-      }
-    })
-    if (!settingsDb || !settingsDb.language) {
-      await this.client.db.settings.create({
-        data: {
-          guildId: guild_id,
-          language: this.config.defaultLanguage
-        }
-      })
-    }
-    if (!es || !es.color) {
-      await this.client.db.embed.create({
-        data: {
-          color: String(this.config.embed.color),
-          wrongcolor: String(this.config.embed.wrongcolor),
-          warncolor: String(this.config.embed.warncolor),
-          footertext: String(this.config.embed.footertext),
-          footericon: String(this.config.embed.footericon),
-          guildId: guild_id
-        }
-      })
-    }
-    this.client.logger.debug(`Databasing finished for guild ${guild_id}`)
-    return true;
-  }
 }
 
 export const textBasedCats = [ChannelType.GuildText, ChannelType.AnnouncementThread, ChannelType.PublicThread, ChannelType.PrivateThread, ChannelType.GuildCategory, ChannelType.GuildAnnouncement];

@@ -6,7 +6,7 @@ export default {
         await interaction.reply({
             embeds: [
                 new ErrySuccessEmbed(es)
-                    .setDescription(client.lang.translate("commands.info_bot_ping.reply", ls, {ping: `${client.ws.ping}`}))
+                    .setDescription(client.lang.translate("commands.info_bot_ping.reply", ls, {ping: `${client.ws.ping}`, dbping: `${await client.db.getPing()}`}))
             ]
         })
     }
