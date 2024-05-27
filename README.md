@@ -1,23 +1,29 @@
-This will be used as handler for bot Erry in discord
+# Erry Bot Handler for Discord.js v14 (TypeScript)
 
-# Quick info
-  1. Uses TS language
-  2. Uses latest dependencies versions
-  3. Uses `discord-hybrid-sharding` and `discord-cross-hosting` to cluster and shard
-  4. Uses `prisma` database wrapper for PostgreSQL database
-  5. Built-in database, redis cache, cross-hosting and sharding
-  6. Easy to use with pre-generated commands (npm run ...)
+Welcome to the Erry Bot Handler repository! This robust handler is designed to streamline your Discord bot development using the latest features of Discord.js v14 with TypeScript. This handler will be used for Erry bot.
 
-# Video Setup
-  [![Youtube handler setup](https://img.youtube.com/vi/sNgils10YMw/0.jpg)](https://www.youtube.com/watch?v=sNgils10YMw)
+## 🚀 Features
 
-# How to setup
-  1. Download code
-  2. rename `config/config_sample.ts` to `config/config.ts`
-  3. fill config (Yes, there is much data needed, but some of that not required to start or you can left default value)
-  4. run `npm run init` and wait
-  5. While you'll see `SETUP IS DONE` in console - you're good to start bot. Use `npm run start` for starting bot, `npm run bridge_start` to start bridge. Other commands see in `package.json`
-  6. OMG IT'S ONLINE!!
+- **TypeScript Ready**: Crafted for the modern TypeScript ecosystem.
+- **Up-to-Date Dependencies**: Always running on the latest versions for peak performance.
+- **Advanced Sharding**: Implements `discord-hybrid-sharding` and `discord-cross-hosting` for efficient clustering and sharding.
+- **Prisma Integration**: Utilizes `prisma` as a powerful database wrapper for PostgreSQL.
+- **Comprehensive Tools**: Comes with an integrated database, Redis cache, cross-hosting, and sharding capabilities.
+- **User-Friendly Commands**: Jumpstart your bot with pre-generated commands (`npm run ...`) for ease of use.
 
-# Credits
-  [Tomato6966/discord-js-v14-handler](https://github.com/Tomato6966/discord-js-v14-handler) - Inspired by code structure. Also few functions was copied and modified from here
+## ⚙️ Installation & Setup
+
+1. **Clone the Repository**: Download the code from GitHub.
+2. **Configure**: Rename `config/config_sample.ts` to `config/config.ts`.
+3. **Customize Configuration**: Fill in the `config.ts` as needed. Don't worry, not all fields are mandatory for initial setup, and defaults work just fine!
+4. **Initialization**: Execute ```npm run init``` and await the magic.
+5. **Launch**: Once you see `SETUP IS DONE` in the console, you're all set! Start your bot with ```npm run start```, and for the bridge, use ```npm run bridge_start```. Discover more commands in `package.json`.
+6. **Success**: Your bot is now live and ready to engage!
+
+## 🎥 Video Setup Guide
+
+[![Youtube handler setup](https://img.youtube.com/vi/sNgils10YMw/0.jpg)](https://www.youtube.com/watch?v=sNgils10YMw)
+
+## 🙌 Acknowledgments
+
+Special thanks to Tomato6966/discord-js-v14-handler for the inspiration behind our code structure and select functions that we've adapted and enhanced.
