@@ -1,0 +1,22 @@
+{
+  "name": "discord.js-v14-ts-handler-bridge",
+  "version": "1.0.0",
+  "description": "Bridge for Powerful discord.js v14 handler",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Undefined-Developers/Discord.js-v14-TS-handler.git"
+  },
+  "author": "Rocky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Undefined-Developers/Discord.js-v14-TS-handler/issues"
+  },
+  "homepage": "https://github.com/Undefined-Developers/Discord.js-v14-TS-handler#readme",
+  "dependencies": {
+    "discord-cross-hosting": "^2.3.8"
+  }
+}
