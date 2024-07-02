@@ -1,9 +1,5 @@
-const   
-    totalShards = "auto", // Total shards for your bot
-    shardsPerCluster = 10, // How much shards you wanna spawn per cluster
-    
+const
     bridge_authToken = "auth", // Password for discord-cross-hosting bridge
-    bridge_totalMachines = 1, // How much machines you'll use (check discord-cross-hosting docs) 
     bridge_host = "127.0.0.1", // ip of hosted bridge (localhost if it's hosted on this machine)
     bridge_port = 4444, // port of bridge
     bridge_use = false, // use bridge, or not? (Use only sharding if not. Won't affect anything cause `discord-cross-hosting` is still in dev.)
