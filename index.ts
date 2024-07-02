@@ -15,7 +15,4 @@ server.on('debug', console.log);
 server.start();
 server.on('ready', url => {
     console.log('Server is ready' + url);
-    setInterval(() => {
-        server.broadcastEval('this.guilds.cache.size').then(console.log).catch(console.log);
-    }, 10000);
 });
