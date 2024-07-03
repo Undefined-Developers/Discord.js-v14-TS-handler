@@ -4,7 +4,7 @@ const force = false
 import * as fs from 'fs';
 import * as os from 'os';
 
-import { config } from '../config';
+import { config } from './config';
 
 var packagejson: any = fs.readFileSync('./package.json')
 packagejson = JSON.parse(packagejson)
@@ -22,7 +22,7 @@ function getOperatingSystemCommands(): void {
         return loadLinuxCommands();
     } else {
         if (!force) {
-            console.error("[INIT SETUP] Code can't determine your OS. I'm not sure you can run it! If you are, go to file \"TS_Handler/utils/init.ts\" and set variable \"force\" to true")
+            console.error("[INIT SETUP] Code can't determine your OS. I'm not sure you can run it! If you are, go to file \"/init.ts\" and set variable \"force\" to true")
             process.exit(1)
         }
         return loadUnknownCommands();
