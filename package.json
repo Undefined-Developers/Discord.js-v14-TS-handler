@@ -4,7 +4,7 @@
   "description": "Bridge for Powerful discord.js v14 handler",
   "main": "index.ts",
   "scripts": {
-    "init": "npm install pm2 -g && npm install && npx tsx init.ts && npx prisma db push && echo SETUP IS DONE"
+    "init": "npm install pm2 -g && npm install && npx tsx init.ts && echo SETUP IS DONE"
   },
   "repository": {
     "type": "git",
