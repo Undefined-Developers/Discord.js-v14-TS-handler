@@ -166,6 +166,88 @@ export function getSlashCommandLocalizations(path: string): commandLocalizations
   return results;
 }
 
+export function getSlashCommandOptionName(path: string, number: number): string {
+  const keys = path.split('.');
+  let current: NestedLanguageType | string = (languages[config.defaultLanguage] as NestedLanguageType)?.commands;
+
+  if (typeof current === 'undefined') {
+    throw `You provided wrong default language in config ${config.defaultLanguage}`
+  }
+
+  for (const key of keys) {
+    if (typeof current === 'string' || !(key in current)) {
+      throw `You provided wrong command localizations path (${path}), or this path is not found in default language in config (${config.defaultLanguage})`
+    }
+    current = current[key];
+  }
+
+  if (!(current as NestedLanguageType).slashLocalizations || !(((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.options[`${number}`] as LanguageOptionLocalization).name)
+    throw `No name found in path (${path}), or this path is not found in default language in config ${config.defaultLanguage}`
+
+  return (((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.options[`${number}`] as LanguageOptionLocalization).name ?? "undefined";
+}
+
+export function getSlashCommandOptionDescription(path: string, number: number): string {
+  const keys = path.split('.');
+  let current: NestedLanguageType | string = (languages[config.defaultLanguage] as NestedLanguageType)?.commands;
+
+  if (typeof current === 'undefined') {
+    throw `You provided wrong default language in config ${config.defaultLanguage}`
+  }
+
+  for (const key of keys) {
+    if (typeof current === 'string' || !(key in current)) {
+      throw `You provided wrong command localizations path (${path}), or this path is not found in default language in config (${config.defaultLanguage})`
+    }
+    current = current[key];
+  }
+
+  if (!(current as NestedLanguageType).slashLocalizations || !(((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.options[`${number}`] as LanguageOptionLocalization).name)
+    throw `No description found in path (${path}), or this path is not found in default language in config ${config.defaultLanguage}`
+
+  return (((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.options[`${number}`] as LanguageOptionLocalization).description ?? "undefined";
+}
+
+export function getSlashCommandOptionLocalizations(path: string, number: number): commandLocalizations[] {
+  const keys = path.split('.');
+  let results: commandLocalizations[] = [];
+
+  for (const language of Object.keys(languages)) {
+    let current: NestedLanguageType | string = (languages[language] as NestedLanguageType)?.commands;
+
+    if (typeof current === 'undefined') {
+      results.push({
+        language: language as LocaleString, 
+        name: "undefined", 
+        description: "undefined"
+      });
+      continue;
+    }
+
+    for (const key of keys) {
+      if (typeof current === 'string' || !(key in current)) {
+        current = "undefined";
+        break;
+      }
+      current = current[key];
+    }
+
+    const option = ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.options?.[`${number}`] as undefined|LanguageOptionLocalization
+
+    if (current) {
+      results.push({
+        language: language as LocaleString, 
+        name: option?.name || `undefined-${Math.random().toFixed(4).split(".").join("")}-${language.toLowerCase()}`,
+        description: option?.description || "No Description Provided"
+      });
+    } else {
+      results.push({language: language as LocaleString, name: `undefined-${language}`, description: "undefined"});
+    }
+  }
+
+  return results;
+}
+
 export type NestedLanguageType = {
   [key: string]: string | NestedLanguageType;
 };
@@ -173,5 +255,14 @@ export type NestedLanguageType = {
 type LanguageCommandLocalizations = {
   name: string;
   description: string;
+  options: LanguageOptionsLocalizations
+  [key: string]: string | NestedLanguageType;
+}
+type LanguageOptionsLocalizations = {
+  [key: string]: string | LanguageOptionLocalization;
+}
+type LanguageOptionLocalization = {
+  name: string
+  description: string
   [key: string]: string | NestedLanguageType;
 }

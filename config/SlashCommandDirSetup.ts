@@ -1,3 +1,5 @@
+import { PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+
 import { dirSetup as dirSetupType } from '../utils/otherTypes';
 
 export const dirSetup = [
@@ -27,6 +29,21 @@ export const dirSetup = [
                 Folder: "Bot",
                 name: "bot",
                 description: "Bot specific Informations",
+            }
+        ]
+    },
+    {
+        Folder: "Owner",
+        name: "owner",
+
+        defaultPermissions: new PermissionsBitField([PermissionFlagsBits.Administrator]).bitfield,
+        
+        description: "DON't TOUCH THIS COMMANDS! pls",
+        groups: [
+            {
+                Folder: "Blacklist",
+                name: "blacklist",
+                description: "Blacklist commands",
             }
         ]
     },

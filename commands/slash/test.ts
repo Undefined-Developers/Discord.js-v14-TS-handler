@@ -6,13 +6,11 @@ export default {
         {
             type: optionTypes.string,
             name: "test",
-            description: "What you think?",
             required: true,
             autocomplete: true
         }
     ],
     async execute(client, interaction, es, ls, GuildSettings) {
-        //@ts-ignore
         const option = interaction.options.getString("test")
         await interaction.reply({embeds:[
             new ErrySuccessEmbed(es)

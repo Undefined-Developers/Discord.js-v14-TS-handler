@@ -17,6 +17,16 @@ model Settings {
   language String
 }
 
+model GuildBlacklist {
+  id String @id @unique
+  reason String
+}
+
+model UserBlacklist {
+  id String @id @unique
+  reason String
+}
+
 //ADDITIONAL
 
 model Embed {

@@ -136,7 +136,7 @@ export class ErryFunctions {
     if (missing?.length >= 1) return {status: false, missing: new PermissionsBitField(missing).toArray()};
     return {status: true};
   }
-  public getFooter(es: Embed, stringurl?: string, customText?: string): EmbedFooterOptions { 
+  public getFooter(es: Embed, stringurl?: string|null, customText?: string|null): EmbedFooterOptions { 
     let text = es.footertext;
     let iconURL: string|undefined = stringurl ? stringurl : es.footericon;
     if (customText) text = customText
@@ -148,7 +148,7 @@ export class ErryFunctions {
     if(![".png", ".jpg", ".wpeg", ".webm", ".gif", ".webp"].some(d => iconURL?.toLowerCase().endsWith(d))) iconURL = this.client.user?.displayAvatarURL();
     return { text, iconURL }
   };
-  public getAuthor(authorname: string, authoricon?: string, authorurl?: string): EmbedAuthorOptions {
+  public getAuthor(authorname: string, authoricon?: string|null, authorurl?: string|null): EmbedAuthorOptions {
     let name = authorname;
     let iconURL = authoricon;
     let url = authorurl;

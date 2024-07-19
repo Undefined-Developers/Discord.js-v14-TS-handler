@@ -1,6 +1,6 @@
 import {
-    AutocompleteInteraction, ChannelType, CommandInteraction, ContextMenuCommandInteraction,
-    LocaleString, LocalizationMap
+    AutocompleteInteraction, ChannelType, ChatInputCommandInteraction, CommandInteraction,
+    ContextMenuCommandInteraction, LocaleString, LocalizationMap
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
@@ -22,7 +22,7 @@ export interface CommandExport {
     mention?: string,
     commandId?: string,
     slashCommandKey?: string,
-    execute: (client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+    execute: (client: BotClient, interaction: ChatInputCommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
     autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
 }
 export interface Command {
@@ -67,18 +67,51 @@ export type commandLocalizations = {
     name: string, 
     description: string
 }
-export interface commandOption {
-    type: "attachment"|"string"|"number"|"role"|"user"|"channel"|"stringchoices"|"numberchoices",
-    name: string,
-    description?: string,
-    required?: boolean,
-    autocomplete?: boolean,
+type CommandOptionBase = {
+    name?: string;
+    description?: string;
+    required?: boolean;
+    autocomplete?: boolean;
+    localizations?: commandOptionLocalizations[];
+};
+export type CommandOptionString = CommandOptionBase & {
+    type: "string";
     max?: number,
     min?: number,
-    choices?: (commandOptionChoiceString | commandOptionChoiceNumber)[],
+    choices?: never
+};
+export type CommandOptionStringChoices = CommandOptionBase & {
+    type: "stringchoices";
+    choices: commandOptionChoiceString[],
+    max?: number,
+    min?: number
+};
+export type CommandOptionNumber = CommandOptionBase & {
+    type: "number",
+    max?: number,
+    min?: number,
+};
+export type CommandOptionNumberChoices = CommandOptionBase & {
+    type: "numberchoices",
+    choices: commandOptionChoiceNumber[],
+    max?: number,
+    min?: number
+};
+export type CommandOptionChannel = CommandOptionBase & {
+    type: "channel",
     channelTypes?: (ChannelType.GuildText | ChannelType.GuildVoice | ChannelType.GuildCategory | ChannelType.GuildAnnouncement | ChannelType.AnnouncementThread | ChannelType.PublicThread | ChannelType.PrivateThread | ChannelType.GuildStageVoice | ChannelType.GuildForum | ChannelType.GuildMedia)[]
-    localizations?: commandOptionLocalizations[]
-}
+};
+export type CommandOptionUser = CommandOptionBase & {
+    type: "user"
+};
+export type CommandOptionRole = CommandOptionBase & {
+    type: "role"
+};
+export type CommandOptionAttachment = CommandOptionBase & {
+    type: "attachment"
+};
+export type commandOption = CommandOptionString | CommandOptionStringChoices | CommandOptionNumber | CommandOptionNumberChoices | CommandOptionChannel | CommandOptionUser | CommandOptionRole | CommandOptionAttachment
+
 export type commandOptionLocalizations = {
     language: LocaleString
     name: string, 
@@ -130,90 +163,15 @@ export const emojiMatches = /(<?(a)?:?(\w{2,32}):(\d{17,19})>?|(?:\ud83d\udc68\u
 
 export const optionTypes = {
     attachment: "attachment",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            autocomplete: false, //optional,
-            type: optionTypes.string,
-            max: 1000, //optional,
-            min: 1, //optional,
-        }
-    */
     string: "string",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            autocomplete: false, //optional,
-            type: optionTypes.number,
-            max: 100, //optional,
-            min: 1, //optional,
-        }
-    */
     number: "number",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            type: optionTypes.role,
-        }
-    */
     role: "role",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            type: optionTypes.user,
-        }
-    */
     user: "user",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            channelTypes: [ChannelType.GuildText], //optional,
-            type: optionTypes.number,
-            max: 100, //optional,
-            min: 1, //optional,
-        }
-    */
     channel: "channel",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            autocomplete: false, //optional,
-            type: optionTypes.stringchoices,
-            choices: [
-                {name: "...", value: "a"},
-                {name: "...", value: "b"},
-            ]
-        }
-    */
-    stringchoices: "stringchoices",
-    /*
-        {
-            name: "...",
-            description: "...",
-            required: false, // optional
-            autocomplete: false, //optional,
-            type: optionTypes.numberchoices,
-            choices: [
-                {name: "...", value: 1 },
-                {name: "...", value: 2 }
-            ]
-        }
-    */
-    numberchoices: "numberchoices"
+    stringChoices: "stringchoices",
+    numberChoices: "numberchoices"
 }
 export const contextTypes = {
-    Message: "Message",
-    User: "User"
+    message: "Message",
+    user: "User"
 }

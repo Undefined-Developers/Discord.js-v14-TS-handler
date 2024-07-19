@@ -3,7 +3,7 @@ import { ContextCommand, contextTypes } from '../../utils/otherTypes';
 
 export default {
     name: "test",
-    type: contextTypes.Message, // "Message" or "User" only
+    type: contextTypes.message, // "message" or "user" only
     async execute(client, interaction, es, ls, GuildSettings) {
         interaction.reply({embeds:[
             new ErrySuccessEmbed(es)

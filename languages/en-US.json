@@ -3,7 +3,13 @@
         "test": {
             "slashLocalizations": {
                 "name": "test",
-                "description": "Test description for command"
+                "description": "Test description for command",
+                "options": {
+                    "1": {
+                        "name": "test",
+                        "description": "What you think?"
+                    }
+                }
             }
         },
         "info_bot_ping": {
@@ -12,6 +18,70 @@
                 "description": "Test description for ping command"
             },
             "reply": "There is `{{ping}}`ms between me and discord\nThere is `{{dbping}}`ms between me and my database"
+        },
+        "owner_blacklist_add": {
+            "slashLocalizations": {
+                "name": "add",
+                "description": "Add user or guild to bot's blacklist",
+                "options": {
+                    "1": {
+                        "name": "type",
+                        "description": "User or Guild?"
+                    },
+                    "2": {
+                        "name": "id",
+                        "description": "Id of user or guild to add"
+                    },
+                    "3": {
+                        "name": "reason",
+                        "description": "Why?"
+                    }
+                }
+            }
+        },
+        "owner_blacklist_show": {
+            "slashLocalizations": {
+                "name": "show",
+                "description": "Show user or guild in bot's blacklist",
+                "options": {
+                    "1": {
+                        "name": "type",
+                        "description": "User or Guild?"
+                    },
+                    "2": {
+                        "name": "id",
+                        "description": "Id of user or guild to reveal reason"
+                    }
+                }
+            }
+        },
+        "owner_blacklist_remove": {
+            "slashLocalizations": {
+                "name": "remove",
+                "description": "Remove user or guild from bot's blacklist",
+                "options": {
+                    "1": {
+                        "name": "type",
+                        "description": "User or Guild?"
+                    },
+                    "2": {
+                        "name": "id",
+                        "description": "Id of user or guild to reveal reason"
+                    }
+                }
+            }
+        },
+        "owner_blacklist_list": {
+            "slashLocalizations": {
+                "name": "list",
+                "description": "List users or guilds in bot's blacklist",
+                "options": {
+                    "1": {
+                        "name": "type",
+                        "description": "User or Guild?"
+                    }
+                }
+            }
         }
     },
     "common": {

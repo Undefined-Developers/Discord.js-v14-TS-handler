@@ -16,13 +16,15 @@ import { Config, config } from '../config/config';
 import { Emojis, emojis } from '../config/emoji';
 import { dirSetup } from '../config/SlashCommandDirSetup';
 import {
-    BotCounters, Command, commandOptionChoiceNumber, commandOptionChoiceString, ContextCommand,
-    optionTypes
+    BotCounters, Command, CommandOptionChannel, commandOptionChoiceNumber,
+    commandOptionChoiceString, CommandOptionNumberChoices, CommandOptionStringChoices,
+    ContextCommand, optionTypes
 } from '../utils/otherTypes';
 import { ErryDatabase } from './Database';
 import { ErryFunctions } from './Functions';
 import {
-    ErryLanguage, getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName
+    ErryLanguage, getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName,
+    getSlashCommandOptionDescription, getSlashCommandOptionLocalizations, getSlashCommandOptionName
 } from './Language';
 import { Logger } from './Logger';
 
@@ -236,7 +238,7 @@ export class BotClient extends Client {
                               if(localization.description) Slash.setDescriptionLocalization(localization.language, localization.description);
                             }
                           }
-                          this.buildCommandOptions(command, Slash)
+                          this.buildCommandOptions(command, Slash, String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + command.name)
                           return Slash;
                         });
                         command.commandId = this.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
@@ -282,7 +284,7 @@ export class BotClient extends Client {
                         if(localization.description) Slash.setDescriptionLocalization(localization.language, localization.description);
                       }
                     }
-                    this.buildCommandOptions(command, Slash)
+                    this.buildCommandOptions(command, Slash, String(thisDirSetup.name).toLowerCase() + "_" + command.name)
                     return Slash;
                   });
                   command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == subSlash.name)?.permissions?.commandId ?? "commandId";
@@ -334,7 +336,7 @@ export class BotClient extends Client {
                   if(localization.description) Slash.setDescriptionLocalization(localization.language, localization.description);
                 }
               }
-              this.buildCommandOptions(command, Slash);
+              this.buildCommandOptions(command, Slash, command.name);
               command.commandId = this?.fetchedApplication?.find?.((c) => c?.name == command.name)?.permissions?.commandId ?? "commandId";
               command.slashCommandKey = `/${command.name}`
               command.mention = `<${command.slashCommandKey}:${command.commandId}>`
@@ -447,25 +449,51 @@ export class BotClient extends Client {
         }
         return op;
     }
-    private buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder) {
+    private buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder, path: string) {
         if (command.options?.length) {
-            for (const option of command.options) {
+            for (var option of command.options) {
+                if (!option.name) {
+                  try {
+                    option.name = getSlashCommandOptionName(path, command.options.indexOf(option)+1)
+                  } catch (e) {
+                    this.logger.stringError(`[LOADER] ${command.name} - getSlashCommandOptionName: ${e}`);
+                    continue;
+                  }
+                }
+                if (!option.description) {
+                  try {
+                    option.description = getSlashCommandOptionDescription(path, command.options.indexOf(option)+1)
+                  } catch (e) {
+                    this.logger.stringError(`[LOADER] ${command.name} - getSlashCommandOptionDescription: ${e}`);
+                    continue;
+                  }
+                }
+                if (!option.name && !option.localizations) {
+                  try {
+                    option.localizations = getSlashCommandOptionLocalizations(path, command.options.indexOf(option)+1)
+                  } catch (e) {
+                    this.logger.stringError(`[LOADER] ${command.name} - getSlashCommandOptionLocalizations: ${e}`);
+                    continue;
+                  }
+                }
                 const type = option.type.toLowerCase();
                 if (type === optionTypes.attachment) {
                     Slash.addAttachmentOption(op => this.buildOption(op, option));
                 } else if (type === optionTypes.channel) {
                     Slash.addChannelOption(op => {
                         op = this.buildOption(op, option);
+                        option = option as CommandOptionChannel
                         if (option.channelTypes) op.addChannelTypes(...option.channelTypes);
                         return op;
                     });
-                } else if (type === optionTypes.number || type === optionTypes.numberchoices) {
+                } else if (type === optionTypes.number || type === optionTypes.numberChoices) {
                     Slash.addNumberOption(op => {
                         op = this.buildOption(op, option);
+                        option = option as CommandOptionNumberChoices
                         op.setAutocomplete(!!option.autocomplete);
                         if (option.max) op.setMaxValue(option.max);
                         if (option.min) op.setMinValue(option.min);
-                        if (type === optionTypes.numberchoices && option.choices) {
+                        if (type === optionTypes.numberChoices && option.choices) {
                             const numberChoices = option.choices.filter((choice): choice is commandOptionChoiceNumber => typeof choice.value === 'number');
                             op.setChoices(...numberChoices);
                         }
@@ -473,13 +501,14 @@ export class BotClient extends Client {
                     });
                 } else if (type === optionTypes.role) {
                     Slash.addRoleOption(op => this.buildOption(op, option));
-                } else if (type === optionTypes.string || type === optionTypes.stringchoices) {
+                } else if (type === optionTypes.string || type === optionTypes.stringChoices) {
                     Slash.addStringOption(op => {
                         op = this.buildOption(op, option);
+                        option = option as CommandOptionStringChoices
                         op.setAutocomplete(!!option.autocomplete);
                         if (option.max) op.setMaxLength(option.max);
                         if (option.min) op.setMinLength(option.min);
-                        if (type === optionTypes.stringchoices && option.choices) {
+                        if (type === optionTypes.stringChoices && option.choices) {
                             const stringChoices = option.choices.filter((choice): choice is commandOptionChoiceString => typeof choice.value === 'string');
                             op.setChoices(...stringChoices);
                         }
