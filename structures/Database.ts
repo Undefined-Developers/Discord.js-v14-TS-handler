@@ -94,7 +94,7 @@ class prismaCacheMiddleware {
     config: Config
     constructor(options: CacheOptions){
         this.toCache = options?.toCache ?? [];
-        this.defaultTTL = options?.defaultTTL ?? 300e3;
+        this.defaultTTL = options?.defaultTTL ?? 30e3;
         this.defaultCacheActions = options.defaultCacheActions ?? [];
         this.useAllModels = options.useAllModels ?? !options?.toCache?.length ? true : false;
         this.cache = new Map()
