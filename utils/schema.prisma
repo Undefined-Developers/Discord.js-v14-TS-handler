@@ -27,8 +27,6 @@ model UserBlacklist {
   reason String
 }
 
-//ADDITIONAL
-
 model Embed {
   settings Settings? @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
   guildId String @id @unique

@@ -85,6 +85,13 @@
         }
     },
     "common": {
+        "blacklist": {
+            "reason": "Reason",
+            "whatToDo": "What to do?",
+            "userInteraction": "You've been blacklisted. Join support for assistance",
+            "guildInteraction": "This guild have been blacklisted. If you're the owner, join support for assistance",
+            "guildInteraction_desc": "If you're the owner, join support for assistance. \nIf you're member, maybe this is good to notify owner about this."
+        },
         "error": "Error while executing `{{command}}`, try again or contact support! ```\n{{error}}\n```",
         "noperms1": "{{Emoji_no}} You need __all__ those Permissions:",
         "noperms2": "{{Emoji_no}} You need one of those Permissions:",

@@ -3,6 +3,7 @@ import { Interaction, LocaleString } from 'discord.js';
 import { Embed } from '../config/config';
 import { autocompleteCommandHandler } from '../handlers/AutocompleteCommandHandler';
 import { contextCommandHandler } from '../handlers/ContextCommandHandler';
+import { interactionBlackListHandler } from '../handlers/InteractionBlacklistHandler';
 import { slashCommandHandler } from '../handlers/SlashCommandHandler';
 import { BotClient } from '../structures/BotClient';
 
@@ -17,7 +18,7 @@ export default async (client: BotClient, interaction: Interaction) => {
             embed: true,
         },
     })
-    var ls: LocaleString = GuildSettings?.language as LocaleString || "en"
+    var ls: LocaleString = GuildSettings?.language as LocaleString || client.config.defaultLanguage
     var es: Embed = GuildSettings?.embed as Embed || client.config.embed
     if (!GuildSettings || !ls || !es) {
         await client.db.createGuildDatabase(interaction.guild.id)
@@ -29,9 +30,11 @@ export default async (client: BotClient, interaction: Interaction) => {
                 embed: true,
             },
         })
-        ls = GuildSettings.language as LocaleString || client.config.defaultLanguage
-        es = GuildSettings.embed as Embed || client.config.embed
+        ls = GuildSettings?.language as LocaleString || client.config.defaultLanguage
+        es = GuildSettings?.embed as Embed || client.config.embed
     }
+
+    if (await interactionBlackListHandler(client, interaction, es, ls, GuildSettings)) return;
         
     interaction.isChatInputCommand() && slashCommandHandler(client, interaction, es, ls, GuildSettings);
     interaction.isContextMenuCommand() && contextCommandHandler(client, interaction, es, ls, GuildSettings);
