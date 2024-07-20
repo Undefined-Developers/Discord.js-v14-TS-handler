@@ -1,7 +1,7 @@
 import { LocaleString, Message } from 'discord.js';
 
 import { Embed } from '../config/config';
-import { messageBlackListHandler } from '../handlers/MessageBlacklistHandler';
+import { messageBlackListHandler } from '../handlers/MessageBlacklist';
 import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient, message: Message) => {

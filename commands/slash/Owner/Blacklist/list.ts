@@ -19,9 +19,8 @@ export default {
         await interaction.deferReply()
 
         const type = interaction.options.getString("type")
-        const id = interaction.options.getString("id")
 
-        if (!type || !id) 
+        if (!type) 
             return interaction.editReply({embeds:[
                 new ErryWarningEmbed(es)
                     .setTitle("You need to provide all data")
@@ -29,14 +28,14 @@ export default {
 
         var data = 
             type == "user" ? 
-                await client.db.userBlacklist.findUnique({where:{id:id}}) 
+                await client.db.userBlacklist.findMany()
             : 
-                await client.db.guildBlacklist.findUnique({where:{id:id}})
+                await client.db.guildBlacklist.findMany()
         
         if (!data) {
             return await interaction.editReply({embeds:[
                 new ErryWarningEmbed(es)
-                    .setTitle(`This ${type} isn't found in blacklist`)
+                    .setTitle(`This ${type} don't have any records`)
             ]})
         }
 
@@ -49,14 +48,25 @@ export default {
             .setCustomId("owner_blacklist_list:previousButton")
             .setLabel("Prev")
             .setStyle(ButtonStyle.Primary)
+            .setDisabled()
+            
+        const chunks = [];
+        for (let i = 0; i < data.length; i += 5) {
+            chunks.push(data.slice(i, i + 5));
+        }
+            
+        const string = chunks[0].map(e => `- \`${e.id}\`: ${e.reason}`).join("\n")
 
-        const actionRow = new ActionRowBuilder().addComponents([nextButton, previousButton])
+        if (chunks.length == 1) nextButton.setDisabled()
+            
+        const actionRow = new ActionRowBuilder().addComponents([previousButton, nextButton])
 
         await interaction.editReply({
             embeds:[
-                new ErrySuccessEmbed(es)
+                new ErrySuccessEmbed(es, {footer:true})
                     .setTitle(`${type} blacklist:`)
-                    .setDescription(`${data.reason}`)
+                    .setDescription(`${string}`)
+                    .setFooter({text: `Page #1/${chunks.length}`})
             ], 
             components: [
                 //@ts-ignore
