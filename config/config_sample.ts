@@ -87,9 +87,6 @@ const
 export const config = {
     "bridge_host": bridge_host,
     "bridge_port": bridge_port,
-    "shardsPerCluster": shardsPerCluster,
-    "bridge_totalMachines": bridge_totalMachines,
-    "totalShards": totalShards,
     "bridge_authToken": bridge_authToken,
     "bridge_use": bridge_use,
     "token": token,
@@ -140,9 +137,6 @@ interface Cooldowns {
 
 export interface Config {
     "bridge_authToken": string,
-    "totalShards": number | "auto",
-    "bridge_totalMachines": number,
-    "shardsPerCluster": number,
     "bridge_host": string,
     "bridge_port": number,
     "bridge_use": boolean,
