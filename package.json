@@ -4,11 +4,7 @@
   "description": "Powerful discord.js v14 handler",
   "main": "index.ts",
   "scripts": {
-    "init": "npm install pm2 -g && npm install && npx tsx utils/init.ts && npx prisma db push && echo SETUP IS DONE",
-    "start": "FORCE_COLOR=1 pm2 start --name 'erry_handler' npx -- tsx index.ts && pm2 save && pm2 log 'erry_handler'",
-    "restart": "pm2 restart 'erry_handler' && pm2 log 'erry_handler'",
-    "stop": "pm2 stop 'erry_handler'",
-    "delete": "pm2 delete 'erry_handler' && pm2 save --force"
+    "init": "npm install pm2 -g && npm install && npx tsx utils/init.ts && npx prisma db push && echo SETUP IS DONE"
   },
   "repository": {
     "type": "git",
