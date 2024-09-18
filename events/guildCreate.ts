@@ -19,5 +19,5 @@ export default async (client: BotClient, guild: Guild) => {
             { name: "Leave Server:", value: `>>> \`\`\`/owner leaveserver ${guild.id}\`\`\``, },
         ])
         .setThumbnail(guild.iconURL());
-    if (client.logger.options.webhook.serverlog && client.logger.webhook) client.logger.webhook.send({embeds: [embed]})
+    if (client.logger.options.webhook.serverlog && client.logger.guildWebhook) client.logger.guildWebhook.send({embeds: [embed]})
 }

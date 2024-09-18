@@ -30,6 +30,7 @@ export class ErryDatabase extends PrismaClient {
 
         const settingsDb = await this.settings.findUnique(key)
         if (!settingsDb || !settingsDb.language) {
+            this.logger.debug(`Creating settings table for guild ${guild_id}`)
             await this.settings.create({
                 data: {
                     guildId: guild_id,
@@ -40,16 +41,17 @@ export class ErryDatabase extends PrismaClient {
 
         const es = await this.embed.findUnique(key)
         if (!es || !es.color) {
-          await this.embed.create({
-            data: {
-              color: String(this.config.embed.color),
-              wrongcolor: String(this.config.embed.wrongcolor),
-              warncolor: String(this.config.embed.warncolor),
-              footertext: String(this.config.embed.footertext),
-              footericon: String(this.config.embed.footericon),
-              guildId: guild_id
-            }
-          })
+            this.logger.debug(`Creating embed table for guild ${guild_id}`)
+            await this.embed.create({
+                data: {
+                color: String(this.config.embed.color),
+                wrongcolor: String(this.config.embed.wrongcolor),
+                warncolor: String(this.config.embed.warncolor),
+                footertext: String(this.config.embed.footertext),
+                footericon: String(this.config.embed.footericon),
+                guildId: guild_id
+                }
+            })
         }
         this.logger.debug(`Creating database finished for guild ${guild_id}`)
         return true;
@@ -58,9 +60,11 @@ export class ErryDatabase extends PrismaClient {
         this.logger.debug(`Removing database for guild ${guild_id}`)
         const key = {where: {guildId: guild_id}}
 
-        await this.settings.delete(key)
+        this.logger.debug(`Deleting embed table for guild ${guild_id}`)
+        await this.embed.deleteMany(key)
 
-        await this.embed.delete(key)
+        this.logger.debug(`Deleting settings table for guild ${guild_id}`)
+        await this.settings.deleteMany(key)
 
         this.logger.debug(`Removing database finished for guild ${guild_id}`)
         return true;

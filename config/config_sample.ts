@@ -15,7 +15,8 @@ const
         log: true,              // Send all log data to console
 
         webhook: {
-            link: "",           // Discord webhook for logs in discord (not required, everything below will not work)
+            guilds: "",         // Discord webhook for guild join/leave (not required)
+            logs: "",           // Discord webhook for logs in discord (not required, everything below will not work)
             debug: true,        // Send all debug data to webhook
             info: true,         // Send all info data to webhook
             error: true,        // Send all error data to webhook
@@ -183,7 +184,8 @@ export interface LogOptions {
 }
 
 export type webhookOptions = {
-    link?: string
+    guilds?: string
+    logs?: string
     debug?: boolean,
     info?: boolean,
     error?: boolean,

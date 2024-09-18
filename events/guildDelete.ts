@@ -18,5 +18,5 @@ export default async (client: BotClient, guild: Guild) => {
             { name: "Servers Bot is in", value: `>>> \`\`\`${client.guilds.cache.size}\`\`\``, },
         ])
         .setThumbnail(guild.iconURL());
-    if (client.logger.options.webhook.serverlog && client.logger.webhook) client.logger.webhook.send({embeds: [embed]})
+    if (client.logger.options.webhook.serverlog && client.logger.guildWebhook) client.logger.guildWebhook.send({embeds: [embed]})
 }

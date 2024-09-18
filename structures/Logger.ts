@@ -47,7 +47,8 @@ export interface loggerOptions {
 }
 
 export type webhookOptions = {
-  link: string,
+  guilds: string,
+  logs: string,
   debug: boolean,
   info: boolean,
   error: boolean,
@@ -67,7 +68,8 @@ interface inputOption {
   log?: boolean,
   logLevel?: number,
   webhook?: {
-    link?: string,
+    guilds?: string,
+    logs?: string,
     debug?: boolean,
     info?: boolean,
     error?: boolean,
@@ -82,11 +84,14 @@ export class Logger {
   private space: string
   public options: loggerOptions
   public webhook: WebhookClient | undefined
+  public guildWebhook: WebhookClient | undefined
   constructor(options?: inputOption) {
     this.space = chalk.magenta.bold(" [::] ")
     this.options = { ...default_options, ...options } as unknown as loggerOptions
-    if (this.options.webhook.link) this.webhook = new WebhookClient({ url: this.options.webhook.link });
-    else for (const key of Object.keys(this.options.webhook) as (keyof webhookOptions)[]) {if (key == "link") continue; this.options.webhook[key] = false}
+    if (this.options.webhook.logs) this.webhook = new WebhookClient({ url: this.options.webhook.logs });
+    else for (const key of Object.keys(this.options.webhook) as (keyof webhookOptions)[]) {if (key == "logs" || key == "guilds" || key == "serverlog") continue; this.options.webhook[key] = false}
+    if (this.options.webhook.guilds) this.guildWebhook = new WebhookClient({ url: this.options.webhook.guilds });
+    else this.options.webhook.serverlog = false
   }
   private GetDay() {
     return moment().format("DD/MM/YY")
@@ -273,7 +278,7 @@ export class Logger {
         chalk.gray.dim(input.flat().join(" "))
       ].join("")
     )
-    if (!this.options.webhook.log && this.options.webhook.link) return;
+    if (!this.options.webhook.log && this.options.webhook.logs) return;
     this.webhook?.send({
       embeds: [
         new EmbedBuilder()
