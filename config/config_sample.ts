@@ -26,7 +26,7 @@ const
         }
     },
     
-    database = "", // postgresql databas econnection link
+    database = "", // postgresql database connection link
     
     botName = "erry_handler", // Name of PM2 process
     

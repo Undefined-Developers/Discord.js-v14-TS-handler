@@ -9,7 +9,6 @@ import {
 } from 'discord.js';
 import { promises } from 'fs';
 import { resolve } from 'path';
-import { createClient, RedisClientType } from 'redis';
 import { pathToFileURL } from 'url';
 
 import { Config, config } from '../config/config';
@@ -20,6 +19,7 @@ import {
     commandOptionChoiceString, CommandOptionNumberChoices, CommandOptionStringChoices,
     ContextCommand, optionTypes
 } from '../utils/otherTypes';
+import { ErryCacheManager } from './Cache';
 import { ErryDatabase } from './Database';
 import { ErryFunctions } from './Functions';
 import {
@@ -34,7 +34,7 @@ export class BotClient extends Client {
     public cluster: ClusterClient<DjsDiscordClient>
     public commands: Collection<string, Command|ContextCommand>
     public eventPaths: Collection<string, {eventName: string, path: string}>
-    public cache: RedisClientType
+    public cache: ErryCacheManager
     public functions: ErryFunctions
     public db: ErryDatabase
     public allCommands: (RESTPostAPIContextMenuApplicationCommandsJSONBody | RESTPostAPIChatInputApplicationCommandsJSONBody)[]
@@ -56,8 +56,8 @@ export class BotClient extends Client {
         this.allCommands = [];
         this.fetchedApplication = [],
         this.functions = new ErryFunctions(this);
-        this.db = new ErryDatabase()
-        this.cache = createClient({url: this.config.redis})
+        this.cache = new ErryCacheManager()
+        this.db = new ErryDatabase(this.cache)
         this.lang = new ErryLanguage()
         this.emoji = emojis
         this.init();
@@ -69,7 +69,7 @@ export class BotClient extends Client {
 
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Cache`);
-        await this.cache.connect().then(e => {this.logger.debug("✅ Cache ready")});
+        await this.cache.connectRedis().then(e => {this.logger.debug("✅ Cache ready")});
 
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Events`);
