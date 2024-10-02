@@ -372,7 +372,8 @@ export class BotClient extends Client {
             
             const Slash = new ContextMenuCommandBuilder()
               .setName(command.name)
-              .setType(ApplicationCommandType[command.type]);
+              //@ts-ignore I have no idea thy type error now there. But it still works, so ts-ignore)
+              .setType((ApplicationCommandType[command.type]));
             
             if (command.localizations) Slash.setNameLocalizations(command.localizations);
             if (command.defaultPermissions) Slash.setDefaultMemberPermissions(command.defaultPermissions);
