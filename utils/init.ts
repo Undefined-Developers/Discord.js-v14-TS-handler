@@ -14,7 +14,7 @@ try {
 }catch(e){}
 if (envfile) envfile = parse(envfile)
 else envfile = {}
-envfile.DATABASE_URL = config.database
+envfile.DATABASE_URL = config.database + "?connection_limit=1"
 envfile.BOT_PROCESS_NAME = config.botName
 var packagejson: any = fs.readFileSync('./package.json')
 packagejson = JSON.parse(packagejson)

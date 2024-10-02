@@ -64,21 +64,25 @@ export class BotClient extends Client {
     }
     public async init() {
         console.log(`${"-=".repeat(40)}-`);
-        this.logger.info(`Loading Languages`);
-        await this.lang.init();
+        this.logger.info(`Loading Cache`);
+        await this.cache.init();
 
         console.log(`${"-=".repeat(40)}-`);
-        this.logger.info(`Loading Cache`);
-        await this.cache.connectRedis().then(e => {this.logger.debug("✅ Cache ready")});
-
+        this.logger.info(`Loading Database`);
+        await this.db.init();
+        
+        console.log(`${"-=".repeat(40)}-`);
+        this.logger.info(`Loading Languages`);
+        await this.lang.init();
+        
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Events`);
         await this.loadEvents();
-
+        
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading Commands`);
         await this.loadCommands();
-
+        
         console.log(`${"-=".repeat(40)}-`);
         this.logger.info(`Loading ContextMenu`);
         await this.loadContextMenu();

@@ -20,7 +20,7 @@ export class ErryCacheManager {
         this.cacheQueue = new PriorityQueue<{ key: string, expiry: number }>((a, b) => b.expiry - a.expiry);
     }
 
-    async connectRedis() {
+    public async init(): Promise<void> {
         await this.Client.connect();
         await this.subClient.connect();
         await this.subClient.subscribe('cache-updates', (message) => {
@@ -29,6 +29,7 @@ export class ErryCacheManager {
                 this.invalidateLocalCache(key);
             }
         });
+        this.logger.debug("✅ Cache ready")
     }
 
     private invalidateLocalCache(key: string) {

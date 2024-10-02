@@ -19,6 +19,10 @@ export class ErryDatabase extends PrismaClient {
         this.logger = new Logger({ prefix: "   Erry DB   ", ...this.config.logLevel });
         this.$use(this.cache.handle)
     }
+    public async init(): Promise<void> {
+        await this.$connect()
+        this.logger.debug("✅ Database ready")
+    }
     public async getPing(): Promise<string> {
         const start = performance.now();
         await this.$queryRaw`SELECT 1`;
