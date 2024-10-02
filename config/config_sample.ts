@@ -41,7 +41,7 @@ const
     devGuilds = [ // Dev guilds
         "1008300478146293760"
     ],
-    ownerIDs = [ // Bot owners (unused in handler source)
+    ownerIDs = [ // Bot owners
         "913117505541775420"
     ],
     

@@ -16,18 +16,6 @@ export class ErryFunctions {
     this.status = 0
     this.config = config
   }
-  public async clearCache() {
-      try {
-        var keys = await this.client.cache.keys("*")
-        for (var key of keys) {
-          await this.client.cache.set(key, JSON.stringify({}))
-        }
-        return true;
-      }catch (e) {
-          this.client.logger.error(e as Error)
-        return false;
-      }
-  }
   public formatMS(millis: number, ls: LocaleString): string {
     let localization = {
       m: this.client.lang.translate("common.metrics.minutesShort", ls),
