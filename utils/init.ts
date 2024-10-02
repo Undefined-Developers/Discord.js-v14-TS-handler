@@ -14,7 +14,9 @@ try {
 }catch(e){}
 if (envfile) envfile = parse(envfile)
 else envfile = {}
-envfile.DATABASE_URL = config.database + "?connection_limit=1"
+var connectionString = new URL(config.database)
+if (!config.database.includes("mongodb")) connectionString.searchParams.append('connection_limit', '1')
+envfile.DATABASE_URL = connectionString.toString()
 envfile.BOT_PROCESS_NAME = config.botName
 var packagejson: any = fs.readFileSync('./package.json')
 packagejson = JSON.parse(packagejson)

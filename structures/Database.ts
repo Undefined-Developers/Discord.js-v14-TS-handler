@@ -25,7 +25,8 @@ export class ErryDatabase extends PrismaClient {
     }
     public async getPing(): Promise<string> {
         const start = performance.now();
-        await this.$queryRaw`SELECT 1`;
+        //await this.$runCommandRaw({ ping: 1 }) // ONLY FOR MONGODB
+        await this.$queryRaw`SELECT 1`; // ANY SQL
         return (performance.now() - start).toFixed(2);
     }
     public async createGuildDatabase(guild_id: string): Promise<boolean> {
