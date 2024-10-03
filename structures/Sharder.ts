@@ -6,8 +6,6 @@ import { config } from '../config/config';
 const botPath = `${process.cwd()}/bot.ts`;
 
 const manager = new ClusterManager(botPath, {
-    totalShards: config.totalShards,
-    shardsPerClusters: config.shardsPerCluster,
     mode: "process",
     token: config.token,
     execArgv: [ ...process.execArgv ]

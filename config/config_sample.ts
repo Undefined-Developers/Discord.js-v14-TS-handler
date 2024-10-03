@@ -31,7 +31,7 @@ const
     
     botName = "erry_handler", // Name of PM2 process
     
-    redis = "", // Redis or DFLY connection link
+    redis = "", // Redis or any redis-based key-value storage connection link (Tested only with redis-server)
     
     id = "", // Bot ID
     
