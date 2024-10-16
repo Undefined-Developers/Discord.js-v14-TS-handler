@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/Undefined-Developers/Discord.js-v14-TS-handler#readme",
   "dependencies": {
-    "discord-cross-hosting": "^2.3.8"
+    "discord-cross-hosting": "^2.3.8",
+    "dotenv": "^16.4.5",
+    "envfile": "^7.1.0"
   }
 }
