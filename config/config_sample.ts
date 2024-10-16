@@ -1,10 +1,10 @@
 const
-    bridge_authToken = "auth", // Password for discord-cross-hosting bridge
+    bridge_authToken = "auth", // Password for discord-cross-hosting bridge. Input for first init, then you can remove it (writes to .env)
     bridge_host = "127.0.0.1", // ip of hosted bridge (localhost if it's hosted on this machine)
     bridge_port = 4444, // port of bridge
     bridge_use = false, // use bridge, or not? (Use only sharding if not. Won't affect anything cause `discord-cross-hosting` is still in dev.)
 
-    token = "", // Bot token
+    token = "", // Bot token. Input for first init, then you can remove it (writes to .env)
 
     logLevel = { // How much data you want to log to console or webhook
         debug: true,            // Send all debug data to console
@@ -27,11 +27,11 @@ const
         }
     },
     
-    database = "", // postgresql database connection link
+    database = "", // postgresql database connection link. Input for first init, then you can remove it (writes to .env)
     
     botName = "erry_handler", // Name of PM2 process
     
-    redis = "", // Redis or any redis-based key-value storage connection link (Tested only with redis-server)
+    redis = "", // Redis or any redis-based key-value storage connection link (Tested only with redis-server). Input for first init, then you can remove it (writes to .env)
     
     id = "", // Bot ID
     
@@ -88,13 +88,13 @@ const
 export const config = {
     "bridge_host": bridge_host,
     "bridge_port": bridge_port,
-    "bridge_authToken": bridge_authToken,
+    "bridge_authToken": process.env.AUTH_KEY || bridge_authToken,
     "bridge_use": bridge_use,
-    "token": token,
+    "token": process.env.TOKEN || token,
     "logLevel": logLevel,
-    "database": database,
+    "database": process.env.DATABASE_URL || database,
     "botName": botName,
-    "redis": redis,
+    "redis": process.env.REDIS || redis,
     "id": id,
     "devCommands": devCommands,
     "devGuilds": devGuilds,

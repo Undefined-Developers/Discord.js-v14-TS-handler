@@ -15,8 +15,11 @@ try {
 if (envfile) envfile = parse(envfile)
 else envfile = {}
 var connectionString = new URL(config.database)
-envfile.DATABASE_URL = connectionString.toString()
+envfile.DATABASE_URL = envfile.DATABASE_URL === connectionString.toString() || connectionString.toString() === "" ? envfile.DATABASE_URL : connectionString.toString(); //connectionString.toString()
 envfile.BOT_PROCESS_NAME = config.botName
+envfile.TOKEN = envfile.TOKEN === config.token || config.token === "" ? envfile.TOKEN : config.token;
+envfile.AUTH_KEY = envfile.AUTH_KEY === config.bridge_authToken || config.bridge_authToken === "" ? envfile.AUTH_KEY : config.bridge_authToken;
+envfile.REDIS = envfile.REDIS === config.redis || config.redis === "" ? envfile.REDIS : config.redis;
 var packagejson: any = fs.readFileSync('./package.json')
 packagejson = JSON.parse(packagejson)
 getOperatingSystemCommands()
@@ -45,16 +48,19 @@ function loadLinuxCommands(): void {
     packagejson.scripts.restart = `pm2 restart '${config.botName}' && pm2 log '${config.botName}'`
     packagejson.scripts.stop = `pm2 stop '${config.botName}'`
     packagejson.scripts.delete = `pm2 delete '${config.botName}' && pm2 save --force`
+    packagejson.scripts["start:cmd"] = `FORCE_COLOR=1 npx tsx index.js`
 }
 function loadWindowsCommands(): void {
     packagejson.scripts.start = `set FORCE_COLOR=1 && pm2 start --name '${config.botName}' npx -- tsx index.ts && pm2 save && pm2 log '${config.botName}'`
     packagejson.scripts.restart = `pm2 restart '${config.botName}' && pm2 log '${config.botName}'`
     packagejson.scripts.stop = `pm2 stop '${config.botName}'`
     packagejson.scripts.delete = `pm2 delete '${config.botName}' && pm2 save --force`
+    packagejson.scripts["start:cmd"] = `set FORCE_COLOR=1 && npx tsx index.js`
 }
 function loadUnknownCommands(): void {
     packagejson.scripts.start = `pm2 start --name '${config.botName}' npx -- tsx index.ts && pm2 save && pm2 log '${config.botName}'`
     packagejson.scripts.restart = `pm2 restart '${config.botName}' && pm2 log '${config.botName}'`
     packagejson.scripts.stop = `pm2 stop '${config.botName}'`
     packagejson.scripts.delete = `pm2 delete '${config.botName}' && pm2 save --force`
+    packagejson.scripts["start:cmd"] = `npx tsx index.js`
 }
