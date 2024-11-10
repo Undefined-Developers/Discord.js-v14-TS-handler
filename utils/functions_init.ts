@@ -4,10 +4,10 @@ import * as os from 'os';
 
 import { config } from '../config/config';
 
-var packagejson: any = fs.readFileSync('./package.json')
-var envfile: any
-var connectionString 
-var force: boolean
+let packagejson: any = fs.readFileSync('./package.json')
+let envfile: any
+let connectionString
+let force: boolean
 export function INIT(frc: boolean) {
     force = frc
     try {
@@ -26,6 +26,8 @@ export function INIT(frc: boolean) {
     envfile.TOKEN = envfile.TOKEN === config.token || config.token === "" ? envfile.TOKEN : config.token;
     envfile.AUTH_KEY = envfile.AUTH_KEY === config.bridge_authToken || config.bridge_authToken === "" ? envfile.AUTH_KEY : config.bridge_authToken;
     envfile.REDIS = envfile.REDIS === config.redis || config.redis === "" ? envfile.REDIS : config.redis;
+    envfile.BRIDGE_HOST = envfile.BRIDGE_HOST === config.bridge_host || config.bridge_host === "" ? envfile.BRIDGE_HOST : config.bridge_host;
+    envfile.BRIDGE_PORT = envfile.BRIDGE_PORT === config.bridge_port || (!config.bridge_port || config.bridge_port === 0) ? envfile.BRIDGE_PORT : config.bridge_port;
     packagejson = JSON.parse(packagejson)
     getOperatingSystemCommands()
     packagejson = JSON.stringify(packagejson, null, 2);

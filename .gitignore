@@ -24,5 +24,8 @@ yarn.lock
 # VSCode settings
 .vscode
 
+#Intelli thingy
+.idea
+
 #Config
 config/config.ts

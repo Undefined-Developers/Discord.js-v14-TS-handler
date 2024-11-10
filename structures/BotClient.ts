@@ -49,7 +49,7 @@ export class BotClient extends Client {
         });
         this.config = config
         this.cluster = new ClusterClient(this);
-        this.config.bridge_use ? this.machine = new Shard(this.cluster) : null;
+        this.machine = new Shard(this.cluster);
         this.logger = new Logger({ prefix: "     Erry    ", ...this.config.logLevel });
         this.commands = new Collection();
         this.eventPaths = new Collection();
