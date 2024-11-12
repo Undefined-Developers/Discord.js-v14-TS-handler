@@ -4,9 +4,9 @@ import {
 
 import { Settings } from '@prisma/client';
 
-import { cooldowns, Embed } from '../config/config';
-import { BotClient } from '../structures/BotClient';
-import { Command } from '../utils/otherTypes';
+import { cooldowns, Embed } from '../../config/config';
+import { BotClient } from '../../structures/BotClient';
+import { Command } from '../../utils/otherTypes';
 
 export function onlySecondDuration(duration: number): string {
     const time = Math.floor(duration / 1000 * 100) / 100;

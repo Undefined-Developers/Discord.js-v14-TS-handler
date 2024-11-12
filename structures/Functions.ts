@@ -7,14 +7,20 @@ import { Config, config, Embed } from '../config/config';
 import { BotCounters, emojiMatches } from '../utils/otherTypes';
 import { BotClient } from './BotClient';
 
+export function isValidSnowflake(s: string): boolean {
+  return /^(\d{17,19})$/ig.test((s || "").trim());
+}
+
 export class ErryFunctions {
   public client: BotClient
   private status: number
   public config: Config
+  public isValidSnowflake: (s: string) => boolean;
   constructor(client: BotClient) {
     this.client = client;
     this.status = 0
     this.config = config
+    this.isValidSnowflake = isValidSnowflake
   }
   public formatMS(millis: number, ls: LocaleString): string {
     let localization = {
@@ -68,7 +74,7 @@ export class ErryFunctions {
               //.replaceAll("{songsplayed}", stats?.songsPlayed)
               .replaceAll("{guilds}", String(guilds))
               .replaceAll("{members}", String(members))
-              .replaceAll("{shard}", shardId)
+              .replaceAll("{shard}", String(shardId))
               .replaceAll("{cluster}", String(this.client.cluster.id)), 
             type: ActivityType[this.config.status.activities[this.status].type],
             url: this.config.status.activities[this.status].url || undefined

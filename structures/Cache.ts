@@ -84,12 +84,14 @@ export class ErryCacheManager {
             return value;
         }
 
+        this.logger.debug(`${key} wasn't found in cache, returning null`);
         return null;
     }
 
     async set(key: string, value: string): Promise<void> {
         this.logger.debug(`Setting entry ${key} in cache`);
         await this.Client.set(key, value, { EX: this.TTL / 1000 });
+        await this.Client.publish('cache-updates', JSON.stringify({ action: 'set', key }));
         this.setLocalCache(key, value);
     }
 

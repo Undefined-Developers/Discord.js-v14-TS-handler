@@ -2,7 +2,10 @@ const
     bridge_authToken = "auth", // Password for discord-cross-hosting bridge. Input for first init, then you can remove it (writes to .env)
     bridge_host = "127.0.0.1", // ip of hosted bridge (localhost if it's hosted on this machine)
     bridge_port = 4444, // port of bridge
-    bridge_use = false, // use bridge, or not? (Use only sharding if not. Won't affect anything cause `discord-cross-hosting` is still in dev.)
+    bridge_create = true, // Create bridge and ignore host and port or use credentials to connect to existing one?
+    bridge_totalShards = "auto", // How many shards to spawn (Only if bridge_create is true)
+    bridge_shardsPerCluster = 10, // How many shards should be spawned on 1 cluster
+    bridge_machines = 1, // How many machines you are running this bot
 
     token = "", // Bot token. Input for first init, then you can remove it (writes to .env)
 
@@ -26,15 +29,15 @@ const
             serverlog: true     // Send guild join log data to webhook
         }
     },
-    
+
     database = "", // postgresql database connection link. Input for first init, then you can remove it (writes to .env)
-    
+
     botName = "erry_handler", // Name of PM2 process
-    
+
     redis = "", // Redis or any redis-based key-value storage connection link (Tested only with redis-server). Input for first init, then you can remove it (writes to .env)
-    
+
     id = "", // Bot ID
-    
+
     devCommands = [ // Array with all commands that should upload ONLY to dev guilds
         "owner"
     ],
@@ -44,17 +47,17 @@ const
     ownerIDs = [ // Bot owners
         "913117505541775420"
     ],
-    
+
     defaultLanguage = "en-US", // default bot language (https://discord.com/developers/docs/reference#locales)
-    
+
     embed = { // Bot's default embed settings
         color: "#25fa6c", // default color
         wrongcolor: "#e01e01", // default color while error
         warncolor: "#ffa500", // default color while warn
-        footertext: "Erry The Best", // default footer text 
+        footertext: "Erry The Best", // default footer text
         footericon: "" // default image at footer (link to image)
     },
-    
+
     status = { // Bot statuses
         activities: [ // All the activities
             {
@@ -70,7 +73,7 @@ const
         status: "online" // "online", "idle", "dnd", "offline"
     };
 
-const   
+const
     cooldownCategoriesHigh = [""],
     cooldownCommandsHigh = [""],
     defaultCooldownMsHigh = 5000,
@@ -89,7 +92,10 @@ export const config = {
     "bridge_host": bridge_host,
     "bridge_port": bridge_port,
     "bridge_authToken": process.env.AUTH_KEY || bridge_authToken,
-    "bridge_use": bridge_use,
+    "bridge_create": bridge_create,
+    "bridge_totalShards": bridge_totalShards,
+    "bridge_shardsPerCluster": bridge_shardsPerCluster,
+    "bridge_machines": bridge_machines,
     "token": process.env.TOKEN || token,
     "logLevel": logLevel,
     "database": process.env.DATABASE_URL || database,
@@ -140,7 +146,10 @@ export interface Config {
     "bridge_authToken": string,
     "bridge_host": string,
     "bridge_port": number,
-    "bridge_use": boolean,
+    "bridge_create": boolean,
+    "bridge_totalShards": "auto" | number,
+    "bridge_shardsPerCluster": "auto" | number,
+    "bridge_machines": number,
     "token": string,
     "logLevel": LogOptions,
     "database": string,
@@ -197,11 +206,11 @@ export type webhookOptions = {
 
 // NEXT TYPES ARE COPIED FROM DISCORD.JS TYPES TO STOP CONFIG THROWING ERRORS WITHOUT MODULES
 type ColorResolvable =
-  | keyof typeof Colors
-  | 'Random'
-  | readonly [red: number, green: number, blue: number]
-  | number
-  | HexColorString;
+    | keyof typeof Colors
+    | 'Random'
+    | readonly [red: number, green: number, blue: number]
+    | number
+    | HexColorString;
 declare const Colors: {
     Default: 0x000000;
     White: 0xffffff;

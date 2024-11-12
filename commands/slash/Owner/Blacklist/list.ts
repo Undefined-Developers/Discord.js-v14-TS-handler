@@ -32,10 +32,10 @@ export default {
             : 
                 await client.db.guildBlacklist.findMany()
         
-        if (!data) {
+        if (!data || !data[0]) {
             return await interaction.editReply({embeds:[
                 new ErryWarningEmbed(es)
-                    .setTitle(`This ${type} don't have any records`)
+                    .setTitle(`This type (${type}) don't have any records`)
             ]})
         }
 

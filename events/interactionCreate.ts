@@ -3,11 +3,11 @@ import { Interaction, LocaleString } from 'discord.js';
 import { Embed, Settings } from '@prisma/client';
 
 import { Embed as ConfigEmbed } from '../config/config';
-import { autocompleteCommandHandler } from '../handlers/AutocompleteCommand';
-import { buttonsOwnerBlacklistList } from '../handlers/ButtonsOwnerBlacklistList';
-import { contextCommandHandler } from '../handlers/ContextCommand';
+import { buttonsOwnerBlacklistList } from '../handlers/Button-Handlers/ButtonsOwnerBlacklistList';
+import { autocompleteCommandHandler } from '../handlers/Command-Handler/AutocompleteCommand';
+import { contextCommandHandler } from '../handlers/Command-Handler/ContextCommand';
+import { slashCommandHandler } from '../handlers/Command-Handler/SlashCommand';
 import { interactionBlackListHandler } from '../handlers/InteractionBlacklist';
-import { slashCommandHandler } from '../handlers/SlashCommand';
 import { BotClient } from '../structures/BotClient';
 
 export default async (client: BotClient, interaction: Interaction) => {

@@ -4,9 +4,9 @@ import {
 
 import { Settings } from '@prisma/client';
 
-import { Embed } from '../config/config';
-import { BotClient } from '../structures/BotClient';
-import { ErryErrorEmbed, ErrySuccessEmbed } from '../structures/Functions';
+import { Embed } from '../../config/config';
+import { BotClient } from '../../structures/BotClient';
+import { ErryErrorEmbed, ErrySuccessEmbed } from '../../structures/Functions';
 
 export async function buttonsOwnerBlacklistList(client: BotClient, interaction: Interaction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<void> {
     if (!interaction.isMessageComponent() || !interaction.customId.includes("owner_blacklist_list")) return;
