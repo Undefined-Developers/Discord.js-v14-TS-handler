@@ -1,18 +1,23 @@
-import { Client, Bridge} from "discord-cross-hosting";
+import { Bridge, Client } from 'discord-cross-hosting';
 import {
     ClusterManager, evalOptions, HeartbeatManager, ReClusterManager
-} from "discord-hybrid-sharding";
-import { ShardClientUtil } from "discord.js";
-import { exec as ChildProcessExec } from "node:child_process";
-import {config} from "../config/config.ts";
-import {isValidSnowflake} from "./Functions.ts";
+} from 'discord-hybrid-sharding';
+import { ShardClientUtil } from 'discord.js';
+import { exec as ChildProcessExec } from 'node:child_process';
+
+import { config } from '../config/config.ts';
+import { isValidSnowflake } from './Functions.ts';
+import { Logger } from './Logger.ts';
 
 const botPath = `${process.cwd()}/bot.ts`;
+
+const LOGGER = new Logger({ prefix: " ClusterMngr ", ...config.logLevel });
 
 export class ErryClusterManager extends ClusterManager {
     public checkShardDowntime: NodeJS.Timeout | null;
     public bridgeServer: Bridge | null;
     public bridgeClient: Client | null;
+    public logger: Logger;
     constructor() {
         super(botPath, {
             totalShards: config.bridge_totalShards === "auto" ? "auto" : Number(config.bridge_totalShards),
@@ -25,10 +30,10 @@ export class ErryClusterManager extends ClusterManager {
         this.checkShardDowntime = null
         this.bridgeServer = null
         this.bridgeClient = null
-        this.on("debug", console.debug);
+        this.logger = LOGGER;
         this.extend(new ReClusterManager());
         this.extend(new HeartbeatManager({ interval: 15e3, maxMissedHeartbeats: 5 }));
-
+        this.on("debug", (m) => this.logger.debug(`[MANAGER] ${m}`));
         this.init();
     }
 
@@ -64,7 +69,6 @@ export class ErryClusterManager extends ClusterManager {
         }
     }
 
-    // first init the bridge server
     async initBridgeServer() {
         if (!config.bridge_create) return true;
         this.bridgeServer = new Bridge({
@@ -79,7 +83,7 @@ export class ErryClusterManager extends ClusterManager {
             shardsPerCluster: config.bridge_shardsPerCluster,
             token: process.env.TOKEN || config.token
         });
-        this.bridgeServer.on("debug", (d) => console.log("BRIDGE SERVER [DEBUG]", d, "\n\n\n"));
+        this.bridgeServer.on("debug", (d) => this.logger.debug("[BRIDGE]", d));
         return this.bridgeServer.start();
     }
 
@@ -93,10 +97,10 @@ export class ErryClusterManager extends ClusterManager {
             rollingRestarts: false
         });
         // @ts-ignore
-        this.bridgeClient.on("debug", (d) => console.log("BRIDGE-CLIENT [DEBUG]", d, "\n\n\n"));
-        this.bridgeClient.on("status", (status) => console.log(`BRIDGE-CLIENT [STATUS] : ${status}`, "\n"));
-        this.bridgeClient.on("close", (reason) => console.log("BRIDGE-CLIENT [CLOSED]", reason, "\n\n\n\n\n"));
-        this.bridgeClient.on("error", (error) => console.log("BRIDGE-CLIENT [ERRORED]", error, "\n\n\n\n\n"));
+        this.bridgeClient.on("debug", (d) => this.logger.debug("[CLIENT]", d));
+        this.bridgeClient.on("status", (status) => this.logger.debug(`[CLIENT] Status : ${status}`));
+        this.bridgeClient.on("close", (reason) => this.logger.info("[CLIENT] Closed: ", String(reason)));
+        this.bridgeClient.on("error", (error) => {this.logger.stringError("[CLIENT] Error: "); this.logger.stringError(String(error))});
         // @ts-ignore
         this.bridgeClient.listen(this);
         return this.bridgeClient.connect();
@@ -110,18 +114,28 @@ export class ErryClusterManager extends ClusterManager {
         this.listenSpawningEvents();
         await this.summon();
     }
-    // force-terminate all childs if master get's terminated (only works on linux based distros)
+
     listenStopManager() {
         // terminate the program if needed
-        ['SIGINT', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'].forEach(signal => process.on(signal, () => {console.log("Exiting...");process.exit()}));
+        ['SIGINT', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'].forEach(signal => 
+            process.on(signal, () => {
+                this.logger.info("Terminating main process...");
+                process.exit()
+            })
+        );
         // terminate the childs if needed
-        ["beforeExit", "exit"].forEach(event => process.on(event, () => {console.log("Exiting...");ChildProcessExec(`pkill -f "${botPath}" -SIGKILL`)}));
+        ["beforeExit", "exit"].forEach(event => 
+            process.on(event, () => {
+                this.logger.info("Terminating all the shard processes...");
+                ChildProcessExec(`pkill -f "${botPath}" -SIGKILL`)
+            })
+        );
         return true;
     }
     listenSpawningEvents() {
         const startTime = process.hrtime();
         return this.on('clusterCreate', cluster => {
-            console.log(`Launched Cluster #${cluster.id}  (${cluster.id+1}/${this.totalClusters} Clusters) [${this.clusters.get(cluster.id)?.shardList.length}/${this.totalShards} Shards]`)
+            this.logger.info(`Launched Cluster #${cluster.id}  (${cluster.id+1}/${this.totalClusters} Clusters) [${this.clusters.get(cluster.id)?.shardList.length}/${this.totalShards} Shards]`)
             cluster.on("message", async (msg) => {
                 // here you can handle custom ipc messages if you want... you can think of a style of that...
             });
@@ -145,22 +159,22 @@ export class ErryClusterManager extends ClusterManager {
 }
 
 const readyManagerEvent = async (manager:ErryClusterManager, startTime:[number, number]) => {
-    console.log(`All Clusters fully started\nTook ${calcProcessDurationTime(startTime)}ms`);
+    LOGGER.info(`All Clusters fully started\nTook ${calcProcessDurationTime(startTime)}ms`);
 
     if(manager.checkShardDowntime) clearInterval(manager.checkShardDowntime);
 
     manager.checkShardDowntime = setInterval(async () => {
         const res = await manager.broadcastEval(`this.ws.status ? this.ws.reconnect() : 0`).catch(e => {
-            console.error(e, `Script: "this.ws.status ? this.ws.reconnect() : 0"`)
+            LOGGER.error(e)
+            LOGGER.stringError(`Script: "this.ws.status ? this.ws.reconnect() : 0"`)
             return []
         });
 
-        if(res.filter(Boolean).length) console.log("MANAGER_CHECKER", "Restarted shards", res);
+        if(res.filter(Boolean).length) LOGGER.debug("[MANAGER_CHECKER] Restarted shards:", String(res));
         return;
     }, 180000).unref();
 };
 
-// process.hrtime() based formatter function:
 export function calcProcessDurationTime(beforeHRTime:[number, number]): number {
     const timeAfter = process.hrtime(beforeHRTime);
     return Math.floor((timeAfter[0] * 1000000000 + timeAfter[1]) / 10000) / 100;

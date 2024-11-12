@@ -1,14 +1,14 @@
 import {
-    EmbedBuilder, LocaleString, MessageContextMenuCommandInteraction, PermissionFlagsBits,
-    PermissionsBitField, UserContextMenuCommandInteraction
+    EmbedBuilder, GuildTextBasedChannel, LocaleString, MessageContextMenuCommandInteraction,
+    PermissionFlagsBits, PermissionsBitField, UserContextMenuCommandInteraction
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
 
-import { cooldowns, Embed } from '../config/config';
-import { BotClient } from '../structures/BotClient';
-import { ErryErrorEmbed } from '../structures/Functions';
-import { ContextCommand } from '../utils/otherTypes';
+import { cooldowns, Embed } from '../../config/config';
+import { BotClient } from '../../structures/BotClient';
+import { ErryErrorEmbed } from '../../structures/Functions';
+import { ContextCommand } from '../../utils/otherTypes';
 
 export function onlySecondDuration(duration: number): string {
     const time = Math.floor(duration / 1000 * 100) / 100;
@@ -40,7 +40,7 @@ export async function contextCommandHandler(client: BotClient, interaction: Mess
                         msg.delete()
                     }, 5000)
                 }).catch(() => {
-                    interaction.channel?.send({ content: content as string }).then(async (msg) => {
+                    (interaction.channel as GuildTextBasedChannel)?.send({ content: content as string }).then(async (msg) => {
                         setTimeout(() => {
                             msg.delete()
                         }, 5000)
