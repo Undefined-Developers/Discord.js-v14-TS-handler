@@ -20,7 +20,7 @@ export class ErryClusterManager extends ClusterManager {
     public logger: Logger;
     constructor() {
         super(botPath, {
-            totalShards: config.bridge_totalShards === "auto" ? "auto" : Number(config.bridge_totalShards),
+            totalShards: 1,
             shardsPerClusters: config.bridge_shardsPerCluster === "auto" ? undefined : Number(config.bridge_shardsPerCluster),
             shardArgs: [ ],
             execArgv: Array.from(process.execArgv),
@@ -77,10 +77,9 @@ export class ErryClusterManager extends ClusterManager {
             },
             port: Number(process.env.BRIDGE_PORT) || config.bridge_port,
             authToken: process.env.AUTH || config.bridge_authToken,
-            totalShards: config.bridge_totalShards,
+            totalShards: config.bridge_totalShards === "auto" ? "auto" : Number(config.bridge_totalShards),
             totalMachines: config.bridge_machines,
-            //@ts-ignore
-            shardsPerCluster: config.bridge_shardsPerCluster,
+            shardsPerCluster: config.bridge_shardsPerCluster === "auto" ? undefined : Number(config.bridge_shardsPerCluster),
             token: process.env.TOKEN || config.token
         });
         this.bridgeServer.on("debug", (d) => this.logger.debug("[BRIDGE]", d));
