@@ -25,7 +25,7 @@ export class ErryClusterManager extends ClusterManager {
             shardArgs: [ ],
             execArgv: Array.from(process.execArgv),
             mode: 'process',
-            token: process.env.TOKEN || config.token,
+            token: config.token,
         });
         this.checkShardDowntime = null
         this.bridgeServer = null
@@ -75,12 +75,12 @@ export class ErryClusterManager extends ClusterManager {
             listenOptions: {
                 host: "0.0.0.0"
             },
-            port: Number(process.env.BRIDGE_PORT) || config.bridge_port,
-            authToken: process.env.AUTH || config.bridge_authToken,
+            port: config.bridge_port,
+            authToken: config.bridge_authToken,
             totalShards: config.bridge_totalShards === "auto" ? "auto" : Number(config.bridge_totalShards),
             totalMachines: config.bridge_machines,
             shardsPerCluster: config.bridge_shardsPerCluster === "auto" ? undefined : Number(config.bridge_shardsPerCluster),
-            token: process.env.TOKEN || config.token
+            token: config.token
         });
         this.bridgeServer.on("debug", (d) => this.logger.debug("[BRIDGE]", d));
         return this.bridgeServer.start();
@@ -89,9 +89,9 @@ export class ErryClusterManager extends ClusterManager {
     async initBridgeClient() {
         this.bridgeClient = new Client({
             agent: "bot",
-            host: config.bridge_create ? "127.0.0.1" : (process.env.BRIDGE_HOST || config.bridge_host),
-            port: Number(process.env.BRIDGE_PORT) || config.bridge_port,
-            authToken: process.env.AUTH || config.bridge_authToken,
+            host: config.bridge_create ? "127.0.0.1" : config.bridge_host,
+            port: config.bridge_port,
+            authToken: config.bridge_authToken,
             retries: 360,
             rollingRestarts: false
         });

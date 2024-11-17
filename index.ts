@@ -1,4 +1,9 @@
-import { ErryClusterManager } from './structures/Sharder.ts';
-
-import("dotenv").then(dotenv => dotenv.config());
-const Cluster = new ErryClusterManager();
+import("dotenv").then(dotenv => {
+    dotenv.config()
+    import('./structures/Sharder.ts').then(
+        module => { 
+            const { ErryClusterManager } = module; 
+            new ErryClusterManager(); 
+        })
+})
+  

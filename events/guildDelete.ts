@@ -7,7 +7,18 @@ export default async (client: BotClient, guild: Guild) => {
     if (!guild.available) return;
     client.logger.debug(`Left from Guild: ${guild.name} (${guild.id}) | Members: ${guild.memberCount} | Current-Average Members/Guild: ${Math.floor(client.guilds.cache.filter((e) => e.memberCount).reduce((a, g) => a + g.memberCount, 0) / client.guilds.cache.size)}`)
     client.db.removeGuildDatabase(guild.id)
-    var theOwner = await guild.fetchOwner()
+    var theOwner 
+    try{
+        theOwner = await guild.fetchOwner()
+    } catch(e) {
+        theOwner = {
+            user: {
+                globalName: "UNKNOWN (Can't load from cache)",
+                username: "unknown"
+            },
+            id: "UNKNOWN (Can't load from cache)"
+        }
+    }
     let embed = new EmbedBuilder()
         .setColor(client.config.embed.wrongcolor)
         .setTitle(`${client.emoji.leave} Left from Server`)
