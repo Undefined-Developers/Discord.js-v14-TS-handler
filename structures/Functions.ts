@@ -53,7 +53,7 @@ export class ErryFunctions {
     return filterDupes ? matchedEmojis.reduce((a: { str: string; parsed: PartialEmoji | null; }[], c: { str: string; parsed: PartialEmoji | null; }) => !a.find(item => item.str === c.str) ? a.concat([c]) : a, []) : matchedEmojis;
   }
   public async statusUpdater(): Promise<void> {
-    const shardIds = [...this.client.cluster.ids.keys()];
+    const shardIds = this.client.cluster.shardList;
     const { guilds, members } = await this.client.cluster.broadcastEval("this.counters", {timeout: 15000}).then((x: BotCounters[]) => {
       return {
         guilds: x.map(v => v.guilds || 0).reduce((a, b) => a + b, 0),
@@ -63,10 +63,10 @@ export class ErryFunctions {
       this.client.logger.error(e);
       return { guilds: 0, members: 0 }
     })
+    this.status + 1 >= this.config.status.activities.length ? this.status = 0 : this.status += 1
     for (let i = shardIds.length - 1; i >= 0; i--) {
       const shardId = shardIds[i];
-      this.status + 1 >= this.config.status.activities.length ? this.status = 0 : this.status += 1
-      this.client.logger.debug(`Updating status to index ${this.status}`)
+      this.client.logger.debug(`Updating status to index ${this.status} on shard #${shardId}`)
       this.client.user?.setPresence({
           activities: [{ 
             name: `${this.config.status.activities[this.status].text}`
