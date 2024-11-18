@@ -89,11 +89,11 @@ export class ErryClusterManager extends ClusterManager {
     async initBridgeClient() {
         this.bridgeClient = new Client({
             agent: "bot",
-            host: config.bridge_create ? "127.0.0.1" : config.bridge_host,
+            host: config.bridge_create ? "localhost" : config.bridge_host,
             port: config.bridge_port,
             authToken: config.bridge_authToken,
             retries: 360,
-            rollingRestarts: false
+            rollingRestarts: true
         });
         // @ts-ignore
         this.bridgeClient.on("debug", (d) => this.logger.debug("[CLIENT]", d));
@@ -134,7 +134,7 @@ export class ErryClusterManager extends ClusterManager {
     listenSpawningEvents() {
         const startTime = process.hrtime();
         return this.on('clusterCreate', cluster => {
-            this.logger.info(`Launched Cluster #${cluster.id}  (${cluster.id+1}/${this.totalClusters} Clusters) [${this.clusters.get(cluster.id)?.shardList.length}/${this.totalShards} Shards]`)
+            this.logger.info(`Launched Cluster #${cluster.id}  (${cluster.id+1}/${this.totalClusters} Clusters) [${cluster?.shardList.length}/${this.totalShards} Shards]`)
             cluster.on("message", async (msg) => {
                 // here you can handle custom ipc messages if you want... you can think of a style of that...
             });
@@ -145,15 +145,15 @@ export class ErryClusterManager extends ClusterManager {
     }
     async summon(timeout?:number, delay?:number) {
         await this.bridgeClient?.requestShardData()
-            .then(e => {
+            .then(async e => {
                 if (!e) return;
                 if (!e.shardList) return;
                 this.totalShards = e.totalShards;
                 this.totalClusters = e.shardList.length;
                 this.shardList = e.shardList[0];
                 this.clusterList = e.clusterList;
+                await this.spawn({ timeout: timeout ?? -1, delay: delay ?? 7000 })
             })
-        return await this.spawn({ timeout: timeout ?? -1, delay: delay ?? 7000 })
     }
 }
 
