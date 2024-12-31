@@ -23,8 +23,7 @@ import { ErryCacheManager } from './Cache';
 import { ErryDatabase } from './Database';
 import { ErryFunctions } from './Functions';
 import {
-    ErryLanguage, getSlashCommandDescription, getSlashCommandLocalizations, getSlashCommandName,
-    getSlashCommandOptionDescription, getSlashCommandOptionLocalizations, getSlashCommandOptionName
+    ErryLanguage
 } from './Language';
 import { Logger } from './Logger';
 
@@ -212,7 +211,7 @@ export class BotClient extends Client {
                         const command = commands[sFile];
                         if (!command.name) {
                           try {
-                            command.name = getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
+                            command.name = this.lang.getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
                           } catch (e) {
                             this.logger.stringError(`${e}`);
                             continue;
@@ -220,7 +219,7 @@ export class BotClient extends Client {
                         }
                         if (!command.description) {
                           try {
-                            command.description = getSlashCommandDescription(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
+                            command.description = this.lang.getSlashCommandDescription(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
                           } catch (e) {
                             command.description = "Temp_Desc"
                             this.logger.warn(`There is no description for ${String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
@@ -228,7 +227,7 @@ export class BotClient extends Client {
                         }
                         if (!command.localizations) {
                           try {
-                            command.localizations = getSlashCommandLocalizations(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
+                            command.localizations = this.lang.getSlashCommandLocalizations(String(thisDirSetup.name).toLowerCase() + "_" + String(groupDirSetup.name).toLowerCase() + "_" + sFile.split(".ts").join(""))
                           } catch (e) {
                             // nothing cause who need localizations if there is 1 language?
                           }
@@ -258,7 +257,7 @@ export class BotClient extends Client {
                   const command = await import(globalFilePath(curPath)).then(x => x.default);
                   if (!command.name) {
                     try {
-                      command.name = getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
+                      command.name = this.lang.getSlashCommandName(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
                     } catch (e) {
                       this.logger.stringError(`${e}`);
                       continue;
@@ -266,7 +265,7 @@ export class BotClient extends Client {
                   }
                   if (!command.description) {
                     try {
-                      command.description = getSlashCommandDescription(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
+                      command.description = this.lang.getSlashCommandDescription(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
                     } catch (e) {
                       command.description = "Temp_Desc"
                       this.logger.warn(`There is no description for ${String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
@@ -274,7 +273,7 @@ export class BotClient extends Client {
                   }
                   if (!command.localizations) {
                     try {
-                      command.localizations = getSlashCommandLocalizations(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
+                      command.localizations = this.lang.getSlashCommandLocalizations(String(thisDirSetup.name).toLowerCase() + "_" + file.split(".ts").join(""))
                     } catch (e) {
                       // nothing cause who need localizations if there is 1 language?
                     }
@@ -305,7 +304,7 @@ export class BotClient extends Client {
               const command = await import(globalFilePath(curPath)).then(x => x.default);
               if (!command.name) {
                 try {
-                  command.name = getSlashCommandName(dir.split(".ts").join(""))
+                  command.name = this.lang.getSlashCommandName(dir.split(".ts").join(""))
                 } catch (e) {
                   this.logger.stringError(`${e}`);
                   continue;
@@ -313,7 +312,7 @@ export class BotClient extends Client {
               }
               if (!command.description) {
                 try {
-                  command.description = getSlashCommandDescription(dir.split(".ts").join(""))
+                  command.description = this.lang.getSlashCommandDescription(dir.split(".ts").join(""))
                 } catch (e) {
                   command.description = "Temp_Desc"
                   this.logger.warn(`There is no description for ${dir.split(".ts").join("")} slash command in ${config.defaultLanguage} language file`)
@@ -321,7 +320,7 @@ export class BotClient extends Client {
               }
               if (!command.localizations) {
                 try {
-                  command.localizations = getSlashCommandLocalizations(dir.split(".ts").join(""))
+                  command.localizations = this.lang.getSlashCommandLocalizations(dir.split(".ts").join(""))
                 } catch (e) {
                   // nothing cause who need localizations if there is 1 language?
                 }
@@ -459,7 +458,7 @@ export class BotClient extends Client {
             for (var option of command.options) {
                 if (!option.name) {
                   try {
-                    option.name = getSlashCommandOptionName(path, command.options.indexOf(option)+1)
+                    option.name = this.lang.getSlashCommandOptionName(path, command.options.indexOf(option)+1)
                   } catch (e) {
                     this.logger.stringError(`[LOADER] ${command.name} - getSlashCommandOptionName: ${e}`);
                     continue;
@@ -467,15 +466,15 @@ export class BotClient extends Client {
                 }
                 if (!option.description) {
                   try {
-                    option.description = getSlashCommandOptionDescription(path, command.options.indexOf(option)+1)
+                    option.description = this.lang.getSlashCommandOptionDescription(path, command.options.indexOf(option)+1)
                   } catch (e) {
                     this.logger.stringError(`[LOADER] ${command.name} - getSlashCommandOptionDescription: ${e}`);
                     continue;
                   }
                 }
-                if (!option.name && !option.localizations) {
+                if (option.name && !option.localizations) {
                   try {
-                    option.localizations = getSlashCommandOptionLocalizations(path, command.options.indexOf(option)+1)
+                    option.localizations = this.lang.getSlashCommandOptionLocalizations(path, command.options.indexOf(option)+1)
                   } catch (e) {
                     this.logger.stringError(`[LOADER] ${command.name} - getSlashCommandOptionLocalizations: ${e}`);
                     continue;
