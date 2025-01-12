@@ -22,9 +22,7 @@ import {
 import { ErryCacheManager } from './Cache';
 import { ErryDatabase } from './Database';
 import { ErryFunctions } from './Functions';
-import {
-    ErryLanguage
-} from './Language';
+import { ErryLanguage } from './Language';
 import { Logger } from './Logger';
 
 export class BotClient extends Client {

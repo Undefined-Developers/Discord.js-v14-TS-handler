@@ -1,5 +1,12 @@
 {
   "commands": {
+    "info_bot_ping": {
+      "slashLocalizations": {
+          "name": "пинг",
+          "description": "Тестовое описание для пинг команды"
+      },
+      "reply": "There is `{{ping}}`ms between me and discord\nThere is `{{dbping}}`ms between me and my database"
+    },
     "test": {
       "slashLocalizations": {
         "name": "тест",

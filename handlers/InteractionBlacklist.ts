@@ -15,7 +15,7 @@ export async function interactionBlackListHandler(client: BotClient, interaction
         (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) && await interaction.reply({
             embeds: [
                 new ErryErrorEmbed(es)
-                    .setTitle(client.lang.translate('common.blacklist.userInteractionBl', ls))
+                    .setTitle(client.lang.translate('common.blacklist.userInteraction', ls))
                     .addFields(
                         {name: client.lang.translate('common.blacklist.reason', ls), value: `${userDB.reason}`}
                     )
