@@ -11,6 +11,10 @@ Welcome to the Erry Bot Handler repository! This robust handler is designed to s
 - **Comprehensive Tools**: Comes with an integrated database, Redis cache, cross-hosting, and sharding capabilities.
 - **User-Friendly Commands**: Jumpstart your bot with pre-generated commands (`npm run ...`) for ease of use.
 
+## ✅ Used by:
+- Contact me in my [discord server](https://discord.fish/undefined) to be added
+1. **discord.fish Bot** - [Click](https://discord.fish)
+
 ## ⚙️ Installation & Setup
 
 1. **Clone handler**: ```git clone https://github.com/Undefined-Developers/Discord.js-v14-TS-handler handler```.
@@ -21,7 +25,7 @@ Welcome to the Erry Bot Handler repository! This robust handler is designed to s
 
 **Success**: Your bot is now live and ready to engage!
 
-*P.S. Everything was tested on node v22.12.0*
+*P.S. Everything was tested on node v22.12.0 and v20.17.0*
 
 ## npm run init - Why?
 I created this script to simplify and speed up setup, but if your host disallow file writes and/or you can't use scripts, there's manual way:
@@ -51,7 +55,3 @@ I created this script to simplify and speed up setup, but if your host disallow 
 ## 🎥 Video Setup Guide (a lil old)
 
 [![Youtube handler setup](https://img.youtube.com/vi/L6jpBGFcxu0/0.jpg)](https://www.youtube.com/watch?v=L6jpBGFcxu0)
-
-## 🙌 Acknowledgments
-
-Special thanks to Tomato6966/discord-js-v14-handler for the inspiration behind our code structure and select functions that we've adapted and enhanced.

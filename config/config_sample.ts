@@ -20,7 +20,7 @@ const
         webhook: {
             guilds: "",         // Discord webhook for guild join/leave (not required)
             logs: "",           // Discord webhook for logs in discord (not required, everything below will not work)
-            debug: true,        // Send all debug data to webhook
+            debug: false,        // UNSAFE WARNING Send all debug data to webhook - UNRECOMMENDED BECAUSE LOGGER DOESN'T CARE ABOUT RATELIMITS
             info: true,         // Send all info data to webhook
             error: true,        // Send all error data to webhook
             success: true,      // Send all success data to webhook
