@@ -1,6 +1,6 @@
 import {
     ActivityType, ChannelType, EmbedAuthorOptions, EmbedBuilder, EmbedFooterOptions, Guild,
-    GuildChannel, LocaleString, parseEmoji, PartialEmoji, PermissionsBitField
+    GuildChannel, Locale, parseEmoji, PartialEmoji, PermissionsBitField
 } from 'discord.js';
 
 import { Config, config, Embed } from '../config/config';
@@ -22,14 +22,14 @@ export class ErryFunctions {
     this.config = config
     this.isValidSnowflake = isValidSnowflake
   }
-  public formatMS(millis: number, ls: LocaleString): string {
+  public formatMS(millis: number, ls: Locale): string {
     let localization = {
       m: this.client.lang.translate("common.metrics.minutesShort", ls),
       s: this.client.lang.translate("common.metrics.secondsShort", ls),
       h: this.client.lang.translate("common.metrics.hoursShort", ls),
       seconds: this.client.lang.translate("common.metrics.seconds", ls)
     }
-    let val = millis < 0 ? true : false;
+    let val = millis < 0;
     if (millis < 0) {
       millis = -millis;
     }
@@ -84,15 +84,15 @@ export class ErryFunctions {
     }
   }
   public uniqueArray(arr: any[]): any[] {
-    var date = Date.now()
+    let date = Date.now()
     const result = arr.filter((element, index) => arr.indexOf(element) === index);
     this.client.logger.debug(`Checked for duplicates in ${Date.now()-date}ms`)
     return result;
   }
   public checkPermsForGuild(guild: Guild): {status: boolean, missing?: string[]} {
-    var me = guild.members.me
+    let me = guild.members.me
     if (!me) return {status: true};
-    var missing = []
+    let missing = []
     if (me.permissions.has(PermissionsBitField.Flags.SendMessages)) missing.push(PermissionsBitField.Flags.SendMessages);
     if (me.permissions.has(PermissionsBitField.Flags.EmbedLinks)) missing.push(PermissionsBitField.Flags.EmbedLinks);
     if (me.permissions.has(PermissionsBitField.Flags.AttachFiles)) missing.push(PermissionsBitField.Flags.AttachFiles);
@@ -108,7 +108,7 @@ export class ErryFunctions {
     const user = channel.guild.members.me
     if (user) var me = channel.permissionsFor(user)
     else return {status: true};
-    var missing = []
+    let missing = []
     if (textBasedCats.includes(channel.type)) {
       if (me.has(PermissionsBitField.Flags.SendMessages)) missing.push(PermissionsBitField.Flags.SendMessages);
       if (me.has(PermissionsBitField.Flags.EmbedLinks)) missing.push(PermissionsBitField.Flags.EmbedLinks);

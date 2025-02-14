@@ -26,7 +26,7 @@ export default {
                     .setTitle("You need to provide all data")
             ]})
 
-        var data = 
+        let data =
             type == "user" ? 
                 await client.db.userBlacklist.findMany()
             : 

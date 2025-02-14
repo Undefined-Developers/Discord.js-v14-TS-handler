@@ -6,8 +6,8 @@ export default async (client: BotClient, guild: Guild) => {
     if (!guild) return;
     if (!guild.available) return;
     client.logger.debug(`Left from Guild: ${guild.name} (${guild.id}) | Members: ${guild.memberCount} | Current-Average Members/Guild: ${Math.floor(client.guilds.cache.filter((e) => e.memberCount).reduce((a, g) => a + g.memberCount, 0) / client.guilds.cache.size)}`)
-    client.db.removeGuildDatabase(guild.id)
-    var theOwner 
+    await client.db.removeGuildDatabase(guild.id)
+    let theOwner
     try{
         theOwner = await guild.fetchOwner()
     } catch(e) {
@@ -29,5 +29,5 @@ export default async (client: BotClient, guild: Guild) => {
             { name: "Servers Bot is in", value: `>>> \`\`\`${client.guilds.cache.size}\`\`\``, },
         ])
         .setThumbnail(guild.iconURL());
-    if (client.logger.options.webhook.serverlog && client.logger.guildWebhook) client.logger.guildWebhook.send({embeds: [embed]})
+    if (client.logger.options.webhook.serverlog && client.logger.guildWebhook) await client.logger.guildWebhook.send({embeds: [embed]})
 }

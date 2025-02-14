@@ -6,8 +6,8 @@ export default async (client: BotClient, guild: Guild) => {
     if (!guild) return;
     if (!guild.available) return;
     client.logger.debug(`Joined a new Guild: ${guild.name} (${guild.id}) | Members: ${guild.memberCount} | Current-Average Members/Guild: ${Math.floor(client.guilds.cache.filter((e) => e.memberCount).reduce((a, g) => a + g.memberCount, 0) / client.guilds.cache.size)}`)
-    client.db.createGuildDatabase(guild.id)
-    var theOwner = await guild.fetchOwner()
+    await client.db.createGuildDatabase(guild.id)
+    let theOwner = await guild.fetchOwner()
     let embed = new EmbedBuilder()
         .setColor(client.config.embed.color)
         .setTitle(`${client.emoji.join} Joined a New Server`)
@@ -19,5 +19,5 @@ export default async (client: BotClient, guild: Guild) => {
             { name: "Leave Server:", value: `>>> \`\`\`/owner leaveserver ${guild.id}\`\`\``, },
         ])
         .setThumbnail(guild.iconURL());
-    if (client.logger.options.webhook.serverlog && client.logger.guildWebhook) client.logger.guildWebhook.send({embeds: [embed]})
+    if (client.logger.options.webhook.serverlog && client.logger.guildWebhook) await client.logger.guildWebhook.send({embeds: [embed]})
 }

@@ -52,7 +52,7 @@ export class ErryCacheManager {
             this.invalidationTimeout = setTimeout(() => {
                 while (this.cacheQueue.size() > 0 && (this.cacheQueue.peek() as { key: string, expiry: number }).expiry <= Date.now()) {
                     const entry = this.cacheQueue.dequeue();
-                    this.Client.del((entry as { key: string, expiry: number }).key).then(d => null);
+                    this.Client.del((entry as { key: string, expiry: number }).key).then(() => null);
                     this.logger.debug(`Invalidated cache key after TTL: ${(entry as { key: string, expiry: number }).key}`);
                 }
                 this.scheduleNextInvalidation();

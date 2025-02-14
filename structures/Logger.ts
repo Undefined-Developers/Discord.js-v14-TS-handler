@@ -163,7 +163,7 @@ export class Logger {
         chalk.red.bold(strings.Error),
         chalk.red.bold(">: "),
         chalk.red.dim(
-          (typeof error == "string" ? [error] : error.stack ? [error.stack] : [error.name, error.message])
+          (error.stack ? [error.stack] : [error.name, error.message])
             .filter(Boolean)
             .map(v => v.toString())
             .join("\n")
@@ -175,7 +175,7 @@ export class Logger {
       embeds: [
         new EmbedBuilder()
         .setTitle("ERROR")
-        .setDescription((typeof error == "string" ? [error] : error.stack ? [error.stack] : [error.name, error.message])
+        .setDescription((error.stack ? [error.stack] : [error.name, error.message])
         .filter(Boolean)
         .map(v => v.toString())
         .join("\n")

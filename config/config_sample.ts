@@ -157,7 +157,7 @@ export interface Config {
     "redis": string,
     "devCommands": string[],
     "devGuilds": string[],
-    "defaultLanguage": LocaleString,
+    "defaultLanguage": Locale,
     "embed": Embed
     "status": Status
     "ownerIDs": string[]
@@ -277,6 +277,5 @@ declare enum Locale {
     Ukrainian = "uk",
     Vietnamese = "vi"
 }
-type LocaleString = `${Locale}`;
 type PresenceStatusData = ClientPresenceStatus | 'invisible';
 type ClientPresenceStatus = 'online' | 'idle' | 'dnd';

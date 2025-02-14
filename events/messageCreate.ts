@@ -1,4 +1,4 @@
-import { LocaleString, Message } from 'discord.js';
+import { Locale, Message } from 'discord.js';
 
 import { Embed } from '../config/config';
 import { messageBlackListHandler } from '../handlers/MessageBlacklist';
@@ -7,7 +7,7 @@ import { BotClient } from '../structures/BotClient';
 export default async (client: BotClient, message: Message) => {
     if(!message.guild) return;
 
-    var GuildSettings = await client.db.settings.findUnique({
+    let GuildSettings = await client.db.settings.findUnique({
         where: {
           guildId: message.guild.id,
         },
@@ -15,8 +15,8 @@ export default async (client: BotClient, message: Message) => {
             embed: true,
         },
     })
-    var ls: LocaleString = GuildSettings?.language as LocaleString || client.config.defaultLanguage
-    var es: Embed = GuildSettings?.embed as Embed || client.config.embed
+    let ls: Locale = GuildSettings?.language as Locale || client.config.defaultLanguage
+    let es: Embed = GuildSettings?.embed as Embed || client.config.embed
     if (!GuildSettings || !ls || !es) {
         await client.db.createGuildDatabase(message.guild.id)
         GuildSettings = await client.db.settings.findUniqueOrThrow({
@@ -27,7 +27,7 @@ export default async (client: BotClient, message: Message) => {
                 embed: true,
             },
         })
-        ls = GuildSettings?.language as LocaleString || client.config.defaultLanguage
+        ls = GuildSettings?.language as Locale || client.config.defaultLanguage
         es = GuildSettings?.embed as Embed || client.config.embed
     }
 

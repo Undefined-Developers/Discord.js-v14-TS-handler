@@ -51,7 +51,7 @@ export class BotClient extends Client {
         this.commands = new Collection();
         this.eventPaths = new Collection();
         this.allCommands = [];
-        this.fetchedApplication = [],
+        this.fetchedApplication = [];
         this.functions = new ErryFunctions(this);
         this.cache = new ErryCacheManager()
         this.db = new ErryDatabase(this.cache)
@@ -95,7 +95,7 @@ export class BotClient extends Client {
         guilds: this.guilds.cache.size,
         members: this.guilds.cache.map(x => x.memberCount).reduce((a,b) => a+b,0),
         clusterId: this.cluster.id,
-        shardIds: [...this.cluster.ids.keys()],
+        shardIds: this.cluster.shardList,
         ping: this.ws.ping,
         uptime: this.uptime,
       } as BotCounters
@@ -157,7 +157,7 @@ export class BotClient extends Client {
               const subSlash = new SlashCommandBuilder()
                 .setName(String(thisDirSetup.name).toLowerCase())
                 .setDescription(String(thisDirSetup.description))
-                .setDMPermission(false);
+                  .setContexts(thisDirSetup.contexts || [0])
               
               if (thisDirSetup.defaultPermissions) {
                 subSlash.setDefaultMemberPermissions(thisDirSetup.defaultPermissions);
@@ -192,7 +192,7 @@ export class BotClient extends Client {
                   }
                   const slashCommands = await promises.readdir(groupPath).then(x => x.filter(v => v.endsWith(".ts")));
                   if (slashCommands?.length) {
-                    var commands: {[key: string]: Command} = {}
+                    let commands: {[key: string]: Command} = {}
                     for (let sFile of slashCommands) {
                       const groupCurPath = `${groupPath}/${sFile}`;
                       commands[sFile] = await import(globalFilePath(groupCurPath)).then(x => x.default);
@@ -323,7 +323,7 @@ export class BotClient extends Client {
                   // nothing cause who need localizations if there is 1 language?
                 }
               }
-              const Slash = new SlashCommandBuilder().setName(command.name as string).setDescription(command.description as string).setDMPermission(false);
+              const Slash = new SlashCommandBuilder().setName(command.name as string).setDescription(command.description as string).setContexts(command.contexts || [0]);
               if(command.defaultPermissions) {
                 Slash.setDefaultMemberPermissions(command.defaultPermissions);
               }
@@ -369,7 +369,6 @@ export class BotClient extends Client {
             
             const Slash = new ContextMenuCommandBuilder()
               .setName(command.name)
-              //@ts-ignore I have no idea thy type error now there. But it still works, so ts-ignore)
               .setType((ApplicationCommandType[command.type]));
             
             if (command.localizations) Slash.setNameLocalizations(command.localizations);
@@ -412,7 +411,7 @@ export class BotClient extends Client {
     }
     public async publishCommands(guildIds?: string[], del?: boolean) {
         if (del) {
-          for (var guild of this.guilds.cache.values()) {
+          for (let guild of this.guilds.cache.values()) {
             guild.commands.set([]).catch(e => {this.logger.error(e);this.logger.debug(`recent error were for guild ${guild.name} || ${guild.id}`);});
           }
           this.logger.debug(`Deleted all commands!`)
@@ -427,9 +426,9 @@ export class BotClient extends Client {
         await this.application?.commands.set(this.allCommands.filter((c) => !this.config.devCommands?.includes?.(c.name))).then(() => {
             this.logger.debug(`SLASH-CMDS | Set ${this.commands.size} global slashCommands!`)
         }).catch(e => {this.logger.error(e);});
-        for (var guildId of guildIds) {
+        for (let guildId of guildIds) {
           const shardId = ShardClientUtil.shardIdForGuildId(guildId, getInfo().TOTAL_SHARDS)
-          if(![...this.cluster.ids.keys()].includes(shardId)) return this.logger.warn("CANT UPDATE SLASH COMMANDS - WRONG CLUSTER");
+          if(!this.cluster.shardList.includes(shardId)) return this.logger.warn("CANT UPDATE SLASH COMMANDS - WRONG CLUSTER");
           const guild = this.guilds.cache.get(guildId);
           if(!guild) return this.logger.stringError(`could not find the guild \`${guildId}\` for updating slash commands`)
           guild.commands.set(this.allCommands.filter((c) => this.config.devCommands?.includes?.(c.name))).catch(e => {this.logger.error(e);});
@@ -453,7 +452,7 @@ export class BotClient extends Client {
     }
     private buildCommandOptions(command: Command, Slash: SlashCommandSubcommandBuilder|SlashCommandBuilder, path: string) {
         if (command.options?.length) {
-            for (var option of command.options) {
+            for (let option of command.options) {
                 if (!option.name) {
                   try {
                     option.name = this.lang.getSlashCommandOptionName(path, command.options.indexOf(option)+1)
@@ -543,7 +542,7 @@ export function getDefaultClientOptions() {
             GatewayIntentBits.Guilds,
             GatewayIntentBits.GuildMembers,
             GatewayIntentBits.GuildModeration,
-            GatewayIntentBits.GuildEmojisAndStickers,
+            GatewayIntentBits.GuildExpressions,
             GatewayIntentBits.GuildIntegrations,
             GatewayIntentBits.GuildWebhooks,
             GatewayIntentBits.GuildInvites,
@@ -590,4 +589,4 @@ async function walks(path: string, recursive: boolean = true): Promise<string[]>
         }
     }
     return files;
-};
+}

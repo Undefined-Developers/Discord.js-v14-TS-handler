@@ -1,5 +1,5 @@
 import {
-    ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, LocaleString
+    ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, Locale
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
@@ -8,11 +8,11 @@ import { Embed } from '../../config/config';
 import { BotClient } from '../../structures/BotClient';
 import { ErryErrorEmbed, ErrySuccessEmbed } from '../../structures/Functions';
 
-export async function buttonsOwnerBlacklistList(client: BotClient, interaction: Interaction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<void> {
+export async function buttonsOwnerBlacklistList(client: BotClient, interaction: Interaction, es: Embed, ls: Locale, GuildSettings: Settings): Promise<void> {
     if (!interaction.isMessageComponent() || !interaction.customId.includes("owner_blacklist_list")) return;
 
     const type = interaction.message.embeds[0].title?.split(" ")[0];
-    var page = parseInt(interaction.message.embeds[0].footer?.text.match(/#(.*?)\//)?.[1] || "1");
+    let page = parseInt(interaction.message.embeds[0].footer?.text.match(/#(.*?)\//)?.[1] || "1");
 
     page = (interaction.customId == "owner_blacklist_list:nextButton" ? page+1 : page-1);
 

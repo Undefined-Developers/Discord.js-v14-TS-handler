@@ -1,4 +1,4 @@
-import { LocaleString } from 'discord.js';
+import { Locale } from 'discord.js';
 import { promises } from 'fs';
 import { readdir } from 'fs/promises';
 
@@ -18,46 +18,46 @@ export class ErryLanguage {
     this.logger = new Logger({prefix: "Erry Language", ...this.config.logLevel})
   }
 
-  public translate(key: string, language: LocaleString, additional?: {
+  public translate(key: string, language: Locale, additional?: {
     [key: string]: string
   }, replace?: boolean): string {
     try {
-      var str
+      let str
       try {
         str = this.get[language] as NestedLanguageType
-        for (var keyy of key.split(".")) {
+        for (let keyy of key.split(".")) {
           str = str[keyy] as NestedLanguageType
         }
       } catch (e) {
         str = this.get[this.config.defaultLanguage] as NestedLanguageType
-        for (var keyy of key.split(".")) {
+        for (let keyy of key.split(".")) {
           str = str[keyy] as NestedLanguageType
         }
       }
       if (typeof str == "object") {
-        var keys = Object.keys(str)
+        let keys = Object.keys(str)
         for (const key of keys) {
           if (typeof str[key] != "string") continue;
           if (additional) {
-            for (var placeholder in additional) {
-              str[key] = (str[key] as string).replaceAll(`{{${placeholder}}}`, !!!replace ? additional[placeholder] : "")
+            for (let placeholder in additional) {
+              str[key] = (str[key] as string).replaceAll(`{{${placeholder}}}`, !replace ? additional[placeholder] : "")
             }
           }
-          for (var placeholder in this.emoji) {
-            str[key] = (str[key] as string).replaceAll(`{{Emoji_${placeholder}}}`, !!!replace ? this.emoji[placeholder] : "")
+          for (let placeholder in this.emoji) {
+            str[key] = (str[key] as string).replaceAll(`{{Emoji_${placeholder}}}`, !replace ? this.emoji[placeholder] : "")
           }
-          str[key] = (str[key] as string).replaceAll(/\s*\{{.*?\}}\s*/g, "")
+          str[key] = (str[key] as string).replaceAll(/\s*\{{.*?\\}}\s*/g, "")
         }
       } else {
         if (additional) {
-          for (var placeholder in additional) {
-            str = (str as string).replaceAll(`{{${placeholder}}}`, !!!replace ? additional[placeholder] : "")
+          for (let placeholder in additional) {
+            str = (str as string).replaceAll(`{{${placeholder}}}`, !replace ? additional[placeholder] : "")
           }
         }
-        for (var placeholder in this.emoji) {
-          str = (str as string).replaceAll(`{{Emoji_${placeholder}}}`, !!!replace ? this.emoji[placeholder] : "")
+        for (let placeholder in this.emoji) {
+          str = (str as string).replaceAll(`{{Emoji_${placeholder}}}`, !replace ? this.emoji[placeholder] : "")
         }
-        str = (str as string).replaceAll(/\s*\{{.*?\}}\s*/g, "")
+        str = (str as string).replaceAll(/\s*\{{.*?\\}}\s*/g, "")
       }
       return (str ? str : "") as string
     } catch (e) {
@@ -75,15 +75,21 @@ export class ErryLanguage {
     const dirs = await readdir(`${process.cwd()}${path}`)
     for (const dir of dirs) {
       const curPath = `${process.cwd()}${path}/${dir}`;
+      const name = dir.split(".json")[0];
+      if (!(Object.values(Locale) as string[]).includes(name)) {
+        this.logger.warn("❌ Unsupported language detected: ", name)
+        continue;
+      }
       const language = JSON.parse((await promises.readFile(curPath)).toString());
+
       languages[dir.split(".json")[0]] = language
       this.logger.debug(`✅ Language Loaded: ${dir.split(".json")[0]}`)
     }
   }
 
-  public translatePermissions(permissionsArray: string[], ls: LocaleString) {
+  public translatePermissions(permissionsArray: string[], ls: Locale) {
     if (!permissionsArray || permissionsArray.length <= 0) return this.translate("common.error", ls);
-    var result = permissionsArray.map((permission, index) => {
+    let result = permissionsArray.map((permission) => {
       return this.translate(`common.permissions.${permission}`, ls)
     })
     return result;
@@ -127,8 +133,8 @@ export class ErryLanguage {
       current = current[key];
     }
 
-    if (!(current as NestedLanguageType).slashLocalizations || !((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.name)
-      throw `No name found in path (${path}), or this path is not found in default language in config ${config.defaultLanguage}`
+    if (!(current as NestedLanguageType).slashLocalizations || !((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.description)
+      throw `No description found in path (${path}), or this path is not found in default language in config ${config.defaultLanguage}`
 
     return ((current as NestedLanguageType).slashLocalizations as LanguageCommandLocalizations)?.description ?? "Description not provided";
   }
@@ -187,7 +193,7 @@ export class ErryLanguage {
 
       // Push the result for this language
       results.push({
-        language: language as LocaleString,
+        language: language as Locale,
         name: commandName,
         description: commandDescription,
       });
@@ -281,14 +287,14 @@ export class ErryLanguage {
 
         // Use fallback with more deterministic naming
         results.push({
-          language: language as LocaleString,
+          language: language as Locale,
           name: fallbackOption?.name ? `${fallbackOption.name}-${language}-${number}` : `option-${number}-${language}`,
           description: fallbackOption?.description || 'No Description Provided',
         });
       } else {
         // If the option exists, push it as is
         results.push({
-          language: language as LocaleString,
+          language: language as Locale,
           name: option?.name || `option-${number}-${language}`,
           description: option?.description || 'No Description Provided',
         });

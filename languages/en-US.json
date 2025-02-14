@@ -12,7 +12,7 @@
                 }
             }
         },
-        "info_bot_ping": {
+        "ping": {
             "slashLocalizations": {
                 "name": "ping",
                 "description": "Test description for ping command"
@@ -99,9 +99,9 @@
             "cmd": "{{Emoji_no}}Wait... Command cooldown",
             "guild": "{{Emoji_no}}Wait... Command cooldown on this guild",
             "global": "{{Emoji_no}}Wait... STOP PLEASE",
-            "cmd_": "> {{Emoji_arrow}}You can use this Command `{{time}}`",
-            "guild_": "> {{Emoji_arrow}}This Guild can use this Command `{{time}}`",
-            "global_": "> {{Emoji_arrow}}You only get use `{{amount}}` Commands per `{{time}}` Seconds"
+            "cmd_": "> {{Emoji_arrow}}You can use this Command in `{{time}}`",
+            "guild_": "> {{Emoji_arrow}}This Guild can use this Command in `{{time}}`",
+            "global_": "> {{Emoji_arrow}}You only can use `{{amount}}` Commands per `{{time}}` Seconds"
         },
         "owner": {
             "notowner": "{{Emoji_no}} You're not the owner of this bot or you haven't permission to do that",

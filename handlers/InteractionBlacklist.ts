@@ -1,4 +1,4 @@
-import { Interaction, LocaleString } from 'discord.js';
+import { Interaction, Locale } from 'discord.js';
 
 import { Settings } from '@prisma/client';
 
@@ -6,7 +6,7 @@ import { Embed } from '../config/config';
 import { BotClient } from '../structures/BotClient';
 import { ErryErrorEmbed } from '../structures/Functions';
 
-export async function interactionBlackListHandler(client: BotClient, interaction: Interaction, es: Embed, ls: LocaleString, GuildSettings: Settings): Promise<boolean> {
+export async function interactionBlackListHandler(client: BotClient, interaction: Interaction, es: Embed, ls: Locale, GuildSettings: Settings): Promise<boolean> {
     const userDB = await client.db.userBlacklist.findUnique({where:{id:interaction.user.id}})
     if (userDB?.reason) {
         interaction.isAutocomplete() && await interaction.respond([

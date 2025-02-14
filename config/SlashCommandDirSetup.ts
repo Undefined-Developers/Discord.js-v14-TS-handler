@@ -1,6 +1,6 @@
 import { PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 
-import { dirSetup as dirSetupType } from '../utils/otherTypes';
+import { dirSetup as dirSetupType, contexts } from '../utils/otherTypes';
 
 export const dirSetup = [
     {
@@ -35,6 +35,12 @@ export const dirSetup = [
     {
         Folder: "Owner",
         name: "owner",
+
+        contexts: [
+            contexts.guild,
+            //contexts.dm,       // Make group available withing DMs with bot
+            //contexts.groupDm   // Make group available withing group DMs with bot
+        ],
 
         defaultPermissions: new PermissionsBitField([PermissionFlagsBits.Administrator]).bitfield,
         

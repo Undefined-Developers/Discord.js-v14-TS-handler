@@ -1,6 +1,6 @@
 import {
     AutocompleteInteraction, ChannelType, ChatInputCommandInteraction, CommandInteraction,
-    ContextMenuCommandInteraction, LocaleString, LocalizationMap
+    ContextMenuCommandInteraction, Locale, LocalizationMap
 } from 'discord.js';
 
 import { Settings } from '@prisma/client';
@@ -15,6 +15,7 @@ export interface CommandExport {
     dmPermissions?: bigint,
     mustPermissions?: bigint[],
     allowedPermissions?: bigint[],
+    contexts?: number[],
     localizations?: commandLocalizations[],
     options?: commandOption[],
     category?: string,
@@ -22,8 +23,8 @@ export interface CommandExport {
     mention?: string,
     commandId?: string,
     slashCommandKey?: string,
-    execute: (client: BotClient, interaction: ChatInputCommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
-    autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+    execute: (client: BotClient, interaction: ChatInputCommandInteraction, es: Embed, ls: Locale, GuildSettings: Settings) => void;
+    autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: Locale, GuildSettings: Settings) => void;
 }
 export interface Command {
     name: string,
@@ -39,8 +40,8 @@ export interface Command {
     mention?: string,
     commandId?: string,
     slashCommandKey?: string,
-    execute: (client: BotClient, interaction: CommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
-    autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+    execute: (client: BotClient, interaction: CommandInteraction, es: Embed, ls: Locale, GuildSettings: Settings) => void;
+    autocomplete?: (client: BotClient, interaction: AutocompleteInteraction, es: Embed, ls: Locale, GuildSettings: Settings) => void;
 }
 export interface ContextCommand {
     name: string,
@@ -56,14 +57,14 @@ export interface ContextCommand {
     commandId?: string,
     shortName?: string,
     slashCommandKey?: string,
-    execute: (client: BotClient, interaction: ContextMenuCommandInteraction, es: Embed, ls: LocaleString, GuildSettings: Settings) => void;
+    execute: (client: BotClient, interaction: ContextMenuCommandInteraction, es: Embed, ls: Locale, GuildSettings: Settings) => void;
 }
 export type CommandCooldown = {
     user: number
     guild: number
 }
 export type commandLocalizations = {
-    language: LocaleString
+    language: Locale
     name: string, 
     description: string
 }
@@ -113,7 +114,7 @@ export type CommandOptionAttachment = CommandOptionBase & {
 export type commandOption = CommandOptionString | CommandOptionStringChoices | CommandOptionNumber | CommandOptionNumberChoices | CommandOptionChannel | CommandOptionUser | CommandOptionRole | CommandOptionAttachment
 
 export type commandOptionLocalizations = {
-    language: LocaleString
+    language: Locale
     name: string, 
     description: string
 }
@@ -130,6 +131,7 @@ export type commandOptionChoiceNumber = {
 export interface dirSetup {
     Folder: string,
     name: string,
+    contexts: number[],
     description?: string,
     defaultPermissions?: bigint,
     dmPermissions?: bigint,
@@ -145,7 +147,7 @@ export type groupDirSetup = {
 }
 
 export type groupDirSetupLocalizations = {
-    language: LocaleString
+    language: Locale
     name?: string
     description: string
 }
@@ -171,6 +173,13 @@ export const optionTypes = {
     stringChoices: "stringchoices",
     numberChoices: "numberchoices"
 }
+
+export const contexts = {
+    guild: 0,
+    dm: 1,
+    groupDm: 2
+}
+
 export const contextTypes = {
     message: "Message",
     user: "User"

@@ -1,4 +1,4 @@
-import { Prisma as PrismaTypes, PrismaClient } from '@prisma/client';
+import {Embed, Prisma as PrismaTypes, PrismaClient, Settings} from '@prisma/client';
 
 import { Config, config } from '../config/config';
 import { ErryCacheManager } from './Cache';
@@ -38,8 +38,8 @@ export class ErryDatabase extends PrismaClient {
             this.logger.debug(`Creating settings table for guild ${guild_id}`)
             await this.settings.create({
                 data: {
-                    guildId: guild_id,
-                    language: this.config.defaultLanguage
+                    ...this.InitialSettingsDatabase,
+                    guildId: guild_id
                 }
             })
         }
@@ -49,12 +49,8 @@ export class ErryDatabase extends PrismaClient {
             this.logger.debug(`Creating embed table for guild ${guild_id}`)
             await this.embed.create({
                 data: {
-                color: String(this.config.embed.color),
-                wrongcolor: String(this.config.embed.wrongcolor),
-                warncolor: String(this.config.embed.warncolor),
-                footertext: String(this.config.embed.footertext),
-                footericon: String(this.config.embed.footericon),
-                guildId: guild_id
+                    ...this.InitialEmbedDatabase,
+                    guildId: guild_id
                 }
             })
         }
@@ -74,6 +70,22 @@ export class ErryDatabase extends PrismaClient {
         this.logger.debug(`Removing database finished for guild ${guild_id}`)
         return true;
     }
+    public get InitialSettingsDatabase(): Settings {
+        return {
+            guildId: "0", // placeholder
+            language: this.config.defaultLanguage
+        }
+    }
+    public get InitialEmbedDatabase(): Embed {
+        return {
+            guildId: "0", // placeholder
+            color: String(this.config.embed.color),
+            wrongcolor: String(this.config.embed.wrongcolor),
+            warncolor: String(this.config.embed.warncolor),
+            footertext: String(this.config.embed.footertext),
+            footericon: String(this.config.embed.footericon),
+        }
+    }
 }
 
 export const defaultMutationMethods = [
@@ -89,7 +101,7 @@ export const defaultMutationMethods = [
 
 class prismaCacheMiddleware {
     private defaultCacheActions: string[];
-    private useAllModels: boolean;
+    private readonly useAllModels: boolean;
     private toCache: {
         model: string,
         actions: string[],
@@ -101,7 +113,7 @@ class prismaCacheMiddleware {
     constructor(options: CacheOptions){
         this.toCache = options?.toCache ?? [];
         this.defaultCacheActions = options.defaultCacheActions ?? [];
-        this.useAllModels = options.useAllModels ?? !options?.toCache?.length ? true : false;
+        this.useAllModels = options.useAllModels ?? !options?.toCache?.length;
         this.cache = options.cache
         this.config = config
         this.logger = new Logger({ prefix: "Erry DB Cache", ...this.config.logLevel });
